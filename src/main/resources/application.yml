@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: commercecore
+  datasource:
+    url: jdbc:postgresql://localhost:5432/commercecore
+    username: commercecore
+    password: commercecore
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+  # Only actually used when the "kafka" profile is active — see docs/kafka.md and
+  # com.commercecore.outbox.RecordingEventSink's @Profile("!kafka"). Harmless to bind otherwise:
+  # no bean actually opens a Kafka connection unless that profile is active.
+  kafka:
+    bootstrap-servers: localhost:29092
+    producer:
+      acks: all
+    consumer:
+      group-id: commercecore-proof-consumer
+      auto-offset-reset: earliest
+      enable-auto-commit: false
