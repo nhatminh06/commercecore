@@ -1,5 +1,7 @@
 # CommerceCore
 
+[![CI](https://github.com/nhatminh06/commercecore/actions/workflows/ci.yml/badge.svg)](https://github.com/nhatminh06/commercecore/actions/workflows/ci.yml)
+
 CommerceCore is a correctness-first e-commerce backend built to study transactional invariants,
 idempotency, payment ambiguity, at-least-once messaging, reconciliation, and remote-service
 failure. It is a modular Spring Boot application with one deliberately extracted gRPC Payment
@@ -13,6 +15,9 @@ The project is designed around one question:
 The answers are backed by real PostgreSQL, Kafka, localhost TCP gRPC, concurrent integration tests,
 service restarts, failure injection, and database inspection. Start with [the guarantees](docs/guarantees.md)
 and [the final failure lab](docs/failure-lab.md).
+
+GitHub Actions runs the complete Gradle build and Testcontainers-backed correctness suite on pushes
+and pull requests.
 
 ## What it demonstrates
 
