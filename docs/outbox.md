@@ -230,7 +230,7 @@ consumer exists yet; that correctness burden is documented, not solved, in this 
 ## No automatic scheduler yet
 
 `OutboxPublisher.publishBatch` is invoked explicitly — by tests, or by the development-only
-`POST /api/dev/outbox/publish` endpoint. Nothing calls it on a timer. Automatic periodic
+`POST /api/dev/outbox/publish` endpoint under the `dev` profile. Nothing calls it on a timer. Automatic periodic
 publication is a decision for the Kafka milestone, which will also decide the operational polling
 model.
 

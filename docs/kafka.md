@@ -170,7 +170,7 @@ Exactly one `DomainEventSink` bean exists in any given Spring context:
 
 No `if (activeProfile.equals("kafka"))` branch exists anywhere in business code — profile gating
 happens once, at bean definition, and `OutboxPublisher` never knows which sink it's holding.
-`./gradlew bootRun` activates the `kafka` profile by default (see build.gradle); tests that extend
+`./gradlew bootRun` activates the `kafka,dev` profiles by default (see build.gradle); tests that extend
 `AbstractKafkaIntegrationTest` activate it via `@ActiveProfiles("kafka")`, and all other existing
 tests are entirely unaffected — they run with `RecordingEventSink` exactly as they did before this
 milestone.
