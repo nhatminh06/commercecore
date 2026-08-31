@@ -1,6 +1,7 @@
 package com.commercecore.payment;
 
 import java.util.UUID;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  * require one); this is how reconciliation is exercised outside of tests until one is added.
  */
 @RestController
+@Profile("dev")
 public class DevReconciliationController {
 
     private final PaymentReconciliationService reconciliationService;

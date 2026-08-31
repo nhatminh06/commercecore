@@ -1,6 +1,7 @@
 package com.commercecore.outbox;
 
 import java.time.Instant;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -8,11 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Development-only trigger — not a real production API. No automatic scheduling exists;
  * publication is invoked explicitly by tests or this endpoint, regardless of which
- * {@link DomainEventSink} is active. See {@link DevRecordingSinkController} for the
- * {@code RecordingEventSink}-specific control surface, which only exists outside the
- * {@code kafka} profile.
+ * {@link DomainEventSink} is active. The controller exists only under the {@code dev} profile.
+ * See {@link DevRecordingSinkController} for the {@code RecordingEventSink}-specific control
+ * surface, which additionally requires Kafka to be inactive.
  */
 @RestController
+@Profile("dev")
 @RequestMapping("/api/dev/outbox")
 public class DevOutboxController {
 

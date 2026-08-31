@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.context.annotation.Profile;
 
 /**
  * Development-only control surface for the fake payment provider — not a real production API.
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  * demonstration (curl), the same way tests set it directly by autowiring the bean.
  */
 @RestController
+@Profile("dev & local-provider")
 @RequestMapping("/api/dev/payment-provider")
 public class DevPaymentProviderController {
 

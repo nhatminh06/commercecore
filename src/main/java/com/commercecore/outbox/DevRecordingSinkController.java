@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Development-only control surface for {@link RecordingEventSink} specifically — only exists
- * when that sink is the active one (i.e. outside the {@code kafka} profile; see
- * {@code docs/kafka.md}). Not a real production API.
+ * Development-only control surface for {@link RecordingEventSink} specifically — it requires
+ * the {@code dev} profile and exists only when that sink is active (outside the {@code kafka}
+ * profile; see {@code docs/kafka.md}). Not a real production API.
  */
 @RestController
 @RequestMapping("/api/dev/outbox/sink")
-@Profile("!kafka")
+@Profile("dev & !kafka")
 public class DevRecordingSinkController {
 
     private final RecordingEventSink sink;
