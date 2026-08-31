@@ -7,15 +7,15 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Profile;
 
 /**
- * There is no real payment processor in CommerceCore. This is the entire "external system" for
- * this milestone: an in-memory double whose next outcome is set explicitly (never random), so
- * tests are deterministic. It is a real {@link org.springframework.stereotype.Component} bean —
- * not a test-only mock — because nothing else stands in for a payment provider yet; tests and
- * {@link DevPaymentProviderController} configure its behavior directly.
+ * Narrow local-profile test double retained so existing domain tests need not open a TCP socket.
+ * Normal runtime uses {@link GrpcPaymentProviderClient}; the extracted Payment Service is the
+ * persistent simulated external system.
  */
 @Component
+@Profile("local-provider")
 public class FakePaymentProvider implements PaymentProvider {
 
     public enum NextOutcome {

@@ -23,21 +23,17 @@ ext {
 
 dependencies {
     implementation project(':payment-proto')
-    implementation 'io.grpc:grpc-netty-shaded:1.66.0'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-database-postgresql'
-    implementation 'org.springframework.kafka:spring-kafka'
-
+    implementation 'io.grpc:grpc-netty-shaded:1.66.0'
     runtimeOnly 'org.postgresql:postgresql'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.testcontainers:postgresql'
-    testImplementation 'org.testcontainers:kafka'
 }
 
 dependencyManagement {
@@ -48,14 +44,5 @@ dependencyManagement {
 
 tasks.named('test') {
     useJUnitPlatform()
-    // Docker 29 rejects docker-java's older negotiated default. Keep the test command copyable
-    // on the documented local stack while remaining compatible with Docker API 1.40+.
     systemProperty 'api.version', System.getProperty('api.version', '1.40')
-}
-
-// Local bootRun uses real Kafka and exposes the explicitly development-only verification
-// controls. Does not affect `test`: JUnit-managed @SpringBootTest contexts are unaffected by
-// this task's JVM system properties.
-tasks.named('bootRun') {
-    systemProperty 'spring.profiles.active', System.getProperty('spring.profiles.active', 'kafka,dev')
 }

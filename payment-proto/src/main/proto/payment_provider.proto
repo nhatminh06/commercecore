@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package commercecore.payment.v1;
+
+option java_multiple_files = true;
+option java_package = "com.commercecore.payment.proto";
+option java_outer_classname = "PaymentProviderContract";
+
+service PaymentProviderService {
+  rpc AuthorizePayment(AuthorizePaymentRequest) returns (AuthorizePaymentResponse);
+  rpc LookupPayment(LookupPaymentRequest) returns (LookupPaymentResponse);
+}
+
+message AuthorizePaymentRequest {
+  string provider_request_id = 1;
+  int64 amount_minor_units = 2;
+}
+
+enum AuthorizationOutcome {
+  AUTHORIZATION_OUTCOME_UNSPECIFIED = 0;
+  AUTHORIZED = 1;
+  DECLINED = 2;
+}
+
+message AuthorizePaymentResponse {
+  AuthorizationOutcome outcome = 1;
+  string provider_reference = 2;
+  string decline_reason = 3;
+}
+
+message LookupPaymentRequest {
+  string provider_request_id = 1;
+}
+
+enum LookupOutcome {
+  LOOKUP_OUTCOME_UNSPECIFIED = 0;
+  LOOKUP_AUTHORIZED = 1;
+  LOOKUP_DECLINED = 2;
+  NOT_FOUND = 3;
+}
+
+message LookupPaymentResponse {
+  LookupOutcome outcome = 1;
+  string provider_reference = 2;
+}

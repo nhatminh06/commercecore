@@ -22,3 +22,10 @@ spring:
       group-id: commercecore-proof-consumer
       auto-offset-reset: earliest
       enable-auto-commit: false
+
+commercecore:
+  payment:
+    grpc:
+      host: ${PAYMENT_SERVICE_HOST:localhost}
+      port: ${PAYMENT_SERVICE_PORT:9090}
+      deadline-ms: ${PAYMENT_GRPC_DEADLINE_MS:500}

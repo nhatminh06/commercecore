@@ -1,1 +1,3 @@
 rootProject.name = 'commercecore'
+
+include 'payment-proto', 'payment-service'

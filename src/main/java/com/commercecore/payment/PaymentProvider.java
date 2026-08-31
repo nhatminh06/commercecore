@@ -6,7 +6,7 @@ import java.util.UUID;
 /**
  * The external-system boundary this milestone studies. {@code providerRequestId} is CommerceCore's
  * own payment ID, passed as the stable request identity — not regenerated per call — so that a
- * provider implementing its own idempotency (as {@link FakePaymentProvider} does) can recognize a
+ * provider implementing its own idempotency can recognize a
  * repeated request for the same logical payment instead of processing it again.
  */
 public interface PaymentProvider {

@@ -10,6 +10,40 @@ services:
     volumes:
       - commercecore-postgres-data:/var/lib/postgresql/data
 
+  payment-postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: payment_provider
+      POSTGRES_USER: payment_provider
+      POSTGRES_PASSWORD: payment_provider
+    ports:
+      - "5433:5432"
+    volumes:
+      - payment-provider-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U payment_provider -d payment_provider"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: payment-service/Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      PAYMENT_DB_URL: jdbc:postgresql://payment-postgres:5432/payment_provider
+      PAYMENT_DB_USER: payment_provider
+      PAYMENT_DB_PASSWORD: payment_provider
+      PAYMENT_GRPC_PORT: 9090
+      PAYMENT_HTTP_PORT: 8091
+    ports:
+      - "9090:9090"
+      - "8091:8091"
+    depends_on:
+      payment-postgres:
+        condition: service_healthy
+
   # Single-node Kafka in KRaft mode (no ZooKeeper) — the official Apache image supports this
   # directly. One broker means replication factor 1: this proves delivery mechanics, not
   # multi-node fault tolerance. See docs/kafka.md.
@@ -35,3 +69,4 @@ services:
 
 volumes:
   commercecore-postgres-data:
+  payment-provider-postgres-data:

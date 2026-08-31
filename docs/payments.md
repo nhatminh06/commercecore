@@ -119,28 +119,24 @@ checkout `Idempotency-Key`: checkout and payment are different operations with d
 identities, and conflating them would make a payment initiation accidentally sensitive to
 whatever key a checkout retry happened to use.
 
-## The fake provider
+## The extracted fake provider
 
-There is no real payment processor. `FakePaymentProvider` is a small, deterministic, in-memory
-double — a real Spring bean (not a test mock), because nothing else stands in for a payment
-provider in this milestone. Its next outcome is set explicitly, never randomly:
+There is no real payment processor. Normal runtime uses `GrpcPaymentProviderClient` to call the
+separate Payment Service, whose deterministic outcome is set explicitly and whose provider truth
+is persisted in its own PostgreSQL database:
 
 - `SUCCESS` — returns `Authorized(providerReference)`.
 - `DECLINED` — returns `Declined(reason)`.
-- `TIMEOUT_AFTER_PROCESSING` — the critical case: the provider *does* record a successful
-  authorization in its own internal ledger, then throws `PaymentProviderTimeoutException` instead
-  of returning it. Tests can call `hasProviderSideAuthorization(providerRequestId)` afterward to
-  prove the provider-side result existed even though CommerceCore received nothing — the concrete
-  evidence behind "timeout ≠ failure," not just an assertion of it.
+- `TIMEOUT_AFTER_PROCESSING` — the provider commits a successful authorization, then delays its
+  gRPC response until CommerceCore's deadline expires.
+- `TIMEOUT_AFTER_DECLINE` — the provider commits a decline, then delays the response likewise.
 
-The fake also implements its own idempotency: calling `authorize` again with a
-`providerRequestId` it has already processed returns the same result instead of reprocessing —
-modeling how a real provider is expected to behave, and giving CommerceCore's own duplicate-call
-prevention a second line of defense.
+The provider ledger implements durable idempotency: the same ID and amount returns the stored
+result/reference after retries or restart; the same ID with a different amount is rejected.
 
-A narrow, clearly-labeled development-only endpoint, `POST /api/dev/payment-provider/next-outcome`,
-lets the fake's next outcome be set over HTTP for manual demonstration — the same configuration
-tests perform directly on the bean.
+A narrow Payment Service endpoint, `POST localhost:8091/api/dev/provider/next-outcome`, is enabled
+only by its `dev` profile. The old `FakePaymentProvider` remains available only under the
+`local-provider` profile for narrow legacy tests; it is not the normal runtime provider.
 
 ## Transaction architecture: three phases, not one
 

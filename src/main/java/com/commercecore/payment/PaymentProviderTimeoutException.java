@@ -10,4 +10,8 @@ public class PaymentProviderTimeoutException extends RuntimeException {
     public PaymentProviderTimeoutException(String message) {
         super(message);
     }
+
+    public PaymentProviderTimeoutException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

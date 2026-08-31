@@ -40,10 +40,9 @@ provider lookup
 ```
 
 `PaymentProvider.lookup(providerRequestId)` is read-only — it must never authorize, retry
-authorization, or create/mutate provider-side state. `FakePaymentProvider.lookup` only reads its
-own internal ledgers (`providerSideAuthorizations`, `providerSideDeclines`), populated exclusively
-by `authorize()`. Every reconciliation test that matters proves `authorizationCallCount` stays
-unchanged across any number of `lookup()` calls.
+authorization, or create/mutate provider-side state. At runtime it invokes remote
+`LookupPayment`; the Payment Service reads `provider_payments`. Transport failure is not
+`NOT_FOUND`. End-to-end tests prove authorization count stays unchanged across reconciliation.
 
 ## Provider request identity
 
@@ -189,7 +188,8 @@ intervention — not guessed at automatically here.
 independently. One payment's provider or database failure is caught and does not abort or roll back
 any other payment's reconciliation in the same batch. No scheduler exists yet — batch and
 single-payment reconciliation are both invoked explicitly (tests, or the development-only
-`POST /api/dev/reconciliation/run` / `POST /api/dev/payments/{paymentId}/reconcile` endpoints).
+`POST /api/dev/reconciliation/run` / `POST /api/dev/payments/{paymentId}/reconcile` endpoints,
+which exist only under the `dev` profile).
 
 ## Interaction with the Kafka order workflow
 
@@ -223,14 +223,12 @@ know about the other; the row lock is the entire coordination mechanism.
 ## Current limitations
 
 - Fake provider only — no real payment processor's reconciliation/lookup API has been integrated.
-- The fake provider's own ledger (`providerSideAuthorizations`/`providerSideDeclines`) is in-memory
-  — it is the *simulated external system*, not CommerceCore's own state, so this does not violate
-  "reconciliation state must be persistent" (`payment_reconciliation_cases` is real PostgreSQL); it
-  does mean the fake provider itself forgets everything on process restart, unlike a real one.
+- The extracted provider is simulated rather than connected to a real processor. Its ledger is
+  persistent PostgreSQL and survives Payment Service restart.
 - No automatic refund workflow.
 - No automatic re-reservation.
 - `REQUIRES_REVIEW` has no operator UI — SQL/API inspection is the only interface for now.
 - No scheduler triggers reconciliation automatically; it is invoked explicitly.
 - No shipping/fulfillment.
-- Single CommerceCore application, single local Kafka broker, single local Postgres — the same
-  limitations already documented in `docs/kafka.md` and `docs/order-workflow.md` apply here too.
+- One CommerceCore process, one Payment Service process, a static gRPC address, and one local Kafka
+  broker; there is no service discovery, TLS, or multi-instance deployment.

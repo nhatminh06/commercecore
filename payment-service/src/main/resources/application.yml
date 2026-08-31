@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: payment-service
+  datasource:
+    url: ${PAYMENT_DB_URL:jdbc:postgresql://localhost:5433/payment_provider}
+    username: ${PAYMENT_DB_USER:payment_provider}
+    password: ${PAYMENT_DB_PASSWORD:payment_provider}
+  flyway:
+    enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+server:
+  port: ${PAYMENT_HTTP_PORT:8091}
+payment-service:
+  grpc:
+    port: ${PAYMENT_GRPC_PORT:9090}
+  simulated-response-delay-ms: ${PAYMENT_SIMULATED_RESPONSE_DELAY_MS:2000}
