@@ -1,5 +1,6 @@
 package com.commercecore.reservation;
 
+import jakarta.validation.Valid;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<ReservationResponse> create(@RequestBody CreateReservationRequest request) {
+    public ResponseEntity<ReservationResponse> create(@Valid @RequestBody CreateReservationRequest request) {
         InventoryReservation reservation = reservationService.reserve(request.sku(), request.quantity());
         return ResponseEntity.status(HttpStatus.CREATED).body(ReservationResponse.from(reservation));
     }

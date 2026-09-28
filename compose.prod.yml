@@ -1,0 +1,161 @@
+name: commercecore-prod
+
+services:
+  reverse-proxy:
+    image: caddy:2.8-alpine
+    restart: unless-stopped
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-commercecore.minhpham06.com}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      frontend:
+        condition: service_healthy
+    mem_limit: 128m
+
+  frontend:
+    build:
+      context: ./web
+      args:
+        NEXT_PUBLIC_DEMO_MODE: public
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      COMMERCECORE_API_URL: http://commercecore:8080
+      NEXT_PUBLIC_DEMO_MODE: public
+    expose: ["3000"]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    depends_on:
+      commercecore:
+        condition: service_healthy
+    mem_limit: 256m
+
+  commercecore:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: kafka,portfolio
+      COMMERCECORE_DB_URL: jdbc:postgresql://postgres:5432/commercecore
+      COMMERCECORE_DB_USER: ${COMMERCECORE_DB_USER:-commercecore_app}
+      COMMERCECORE_DB_PASSWORD: ${COMMERCECORE_DB_PASSWORD:?set COMMERCECORE_DB_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      PAYMENT_SERVICE_HOST: payment-service
+      PAYMENT_SERVICE_PORT: 9090
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=70 -XX:InitialRAMPercentage=20
+    expose: ["8080"]
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:8080/actuator/health/readiness"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 30s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      payment-service:
+        condition: service_healthy
+    mem_limit: 768m
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: payment-service/Dockerfile
+    restart: unless-stopped
+    environment:
+      PAYMENT_DB_URL: jdbc:postgresql://payment-postgres:5432/payment_provider
+      PAYMENT_DB_USER: ${PAYMENT_DB_USER:-payment_app}
+      PAYMENT_DB_PASSWORD: ${PAYMENT_DB_PASSWORD:?set PAYMENT_DB_PASSWORD}
+      PAYMENT_GRPC_PORT: 9090
+      PAYMENT_HTTP_PORT: 8091
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=70 -XX:InitialRAMPercentage=20
+    expose: ["8091", "9090"]
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:8091/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 25s
+    depends_on:
+      payment-postgres:
+        condition: service_healthy
+    mem_limit: 512m
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: commercecore
+      POSTGRES_USER: ${COMMERCECORE_DB_USER:-commercecore_app}
+      POSTGRES_PASSWORD: ${COMMERCECORE_DB_PASSWORD:?set COMMERCECORE_DB_PASSWORD}
+    volumes:
+      - commercecore-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    mem_limit: 384m
+
+  payment-postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: payment_provider
+      POSTGRES_USER: ${PAYMENT_DB_USER:-payment_app}
+      POSTGRES_PASSWORD: ${PAYMENT_DB_PASSWORD:?set PAYMENT_DB_PASSWORD}
+    volumes:
+      - payment-provider-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    mem_limit: 384m
+
+  kafka:
+    image: apache/kafka:3.8.0
+    restart: unless-stopped
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      CLUSTER_ID: MTIzNDU2Nzg5MGFiY2RlZg
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server 127.0.0.1:9092 --list >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 8s
+      retries: 18
+      start_period: 30s
+    mem_limit: 1024m
+
+volumes:
+  commercecore-postgres-data:
+  payment-provider-postgres-data:
+  kafka-data:
+  caddy-data:
+  caddy-config:

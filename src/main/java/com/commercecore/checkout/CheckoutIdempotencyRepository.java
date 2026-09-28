@@ -6,6 +6,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface CheckoutIdempotencyRepository extends JpaRepository<CheckoutIdempotency, String> {
 
+    long countByCartId(java.util.UUID cartId);
+
     /**
      * Serializes every "check this key, and if absent run checkout and record it" sequence
      * against the same idempotency key, across every connection and every application instance —

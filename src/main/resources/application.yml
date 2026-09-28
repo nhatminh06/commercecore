@@ -2,9 +2,9 @@ spring:
   application:
     name: commercecore
   datasource:
-    url: jdbc:postgresql://localhost:5432/commercecore
-    username: commercecore
-    password: commercecore
+    url: ${COMMERCECORE_DB_URL:jdbc:postgresql://localhost:5432/commercecore}
+    username: ${COMMERCECORE_DB_USER:commercecore}
+    password: ${COMMERCECORE_DB_PASSWORD:commercecore}
   jpa:
     hibernate:
       ddl-auto: validate
@@ -15,7 +15,7 @@ spring:
   # com.commercecore.outbox.RecordingEventSink's @Profile("!kafka"). Harmless to bind otherwise:
   # no bean actually opens a Kafka connection unless that profile is active.
   kafka:
-    bootstrap-servers: localhost:29092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
     producer:
       acks: all
     consumer:
@@ -29,3 +29,12 @@ commercecore:
       host: ${PAYMENT_SERVICE_HOST:localhost}
       port: ${PAYMENT_SERVICE_PORT:9090}
       deadline-ms: ${PAYMENT_GRPC_DEADLINE_MS:500}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true

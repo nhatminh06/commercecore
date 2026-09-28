@@ -8,7 +8,9 @@ COPY payment-service payment-service
 RUN gradle :payment-service:bootJar --no-daemon
 
 FROM eclipse-temurin:21-jre-alpine
+RUN addgroup -S payment && adduser -S -G payment payment
 WORKDIR /app
 COPY --from=build /workspace/payment-service/build/libs/payment-service-0.0.1.jar app.jar
+USER payment
 EXPOSE 8091 9090
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]

@@ -4,6 +4,8 @@ import com.commercecore.inventory.Inventory;
 import com.commercecore.inventory.InventoryRepository;
 import com.commercecore.shared.BusinessRuleViolation;
 import java.math.BigDecimal;
+import java.util.List;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,5 +45,9 @@ public class ProductService {
     public Product getBySku(String sku) {
         return productRepository.findBySku(sku)
             .orElseThrow(() -> new BusinessRuleViolation(HttpStatus.NOT_FOUND, "unknown_sku", "Unknown SKU: " + sku));
+    }
+
+    public List<Product> getAll() {
+        return productRepository.findAll(Sort.by(Sort.Direction.ASC, "sku"));
     }
 }

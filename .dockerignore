@@ -1,5 +1,8 @@
 .git
 .gradle
-.idea
 build
-**/build
+payment-service/build
+payment-proto/build
+web
+.env*
+docs/screenshots

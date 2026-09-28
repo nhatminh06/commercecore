@@ -5,3 +5,7 @@ build/
 *.iml
 out/
 .DS_Store
+web/.next/
+web/node_modules/
+web/.env*.local
+.env.production

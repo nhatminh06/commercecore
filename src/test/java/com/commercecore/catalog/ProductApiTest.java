@@ -1,11 +1,13 @@
 package com.commercecore.catalog;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 import com.commercecore.AbstractIntegrationTest;
 import com.commercecore.inventory.InventoryResponse;
 import com.commercecore.shared.ApiError;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,28 @@ class ProductApiTest extends AbstractIntegrationTest {
 
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(getResponse.getBody().name()).isEqualTo("Widget");
+    }
+
+    @Test
+    void listsProductsInSkuOrder() {
+        String suffix = UUID.randomUUID().toString();
+        String skuB = "SKU-B-" + suffix;
+        String skuA = "SKU-A-" + suffix;
+        restTemplate.postForEntity("/api/products",
+            new CreateProductRequest(skuB, "Second", new BigDecimal("12.00"), 2), ProductResponse.class);
+        restTemplate.postForEntity("/api/products",
+            new CreateProductRequest(skuA, "First", new BigDecimal("9.99"), 3), ProductResponse.class);
+
+        ResponseEntity<ProductResponse[]> response =
+            restTemplate.getForEntity("/api/products", ProductResponse[].class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(Arrays.asList(response.getBody()))
+            .filteredOn(product -> product.sku().endsWith(suffix))
+            .extracting(ProductResponse::sku, ProductResponse::name, ProductResponse::price)
+            .containsExactly(
+                tuple(skuA, "First", new BigDecimal("9.99")),
+                tuple(skuB, "Second", new BigDecimal("12.00")));
     }
 
     @Test

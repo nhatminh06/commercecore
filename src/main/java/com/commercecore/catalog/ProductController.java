@@ -1,6 +1,7 @@
 package com.commercecore.catalog;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,11 @@ public class ProductController {
         Product product = productService.createProduct(
             request.sku(), request.name(), request.price(), request.initialQuantity());
         return ResponseEntity.status(HttpStatus.CREATED).body(ProductResponse.from(product));
+    }
+
+    @GetMapping
+    public List<ProductResponse> getAll() {
+        return productService.getAll().stream().map(ProductResponse::from).toList();
     }
 
     @GetMapping("/{sku}")

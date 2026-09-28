@@ -16,8 +16,35 @@ The answers are backed by real PostgreSQL, Kafka, localhost TCP gRPC, concurrent
 service restarts, failure injection, and database inspection. Start with [the guarantees](docs/guarantees.md)
 and [the final failure lab](docs/failure-lab.md).
 
-GitHub Actions runs the complete Gradle build and Testcontainers-backed correctness suite on pushes
-and pull requests.
+GitHub Actions validates the backend correctness suite, frontend lint/tests/production build, and
+production Compose configuration.
+
+## Run or deploy
+
+- Local development: `docker compose up -d`, `./gradlew bootRun`, then `cd web && npm run dev`.
+- Production VM: copy `.env.production.example`, provide independent strong database passwords,
+  then run `docker compose --env-file .env.production -f compose.prod.yml up -d --build`.
+- Full Ubuntu, firewall, Cloudflare, backup, update, and rollback instructions: [production deployment](docs/deployment.md).
+
+The intended public hostname is `commercecore.minhpham06.com`, but this README does not advertise a
+live-demo link until the HTTPS deployment has been independently verified.
+
+## Portfolio walkthrough
+
+![CommerceCore overview](docs/screenshots/overview.png)
+
+1. Open **Store Simulator** and create a cart from the seeded catalog.
+2. Add an item and check out with a persistent idempotency key.
+3. Follow the generated order link into **Order Inspector**.
+4. Review the architecture and event-evidence explanation.
+5. Run Failure Lab and Concurrency Lab locally; their mutating controls are intentionally disabled
+   on the public deployment.
+
+Additional screenshots: [Store](docs/screenshots/store.png),
+[Order Inspector](docs/screenshots/order-inspector.png),
+[Event Explorer](docs/screenshots/event-explorer.png),
+[Failure Lab](docs/screenshots/failure-lab.png), and
+[Concurrency Lab](docs/screenshots/concurrency-lab.png).
 
 ## What it demonstrates
 
@@ -131,6 +158,7 @@ Spring Kafka, Protocol Buffers, gRPC Java, JUnit 5, Testcontainers, and Docker C
 src/                    CommerceCore application and tests
 payment-proto/          PaymentProvider protobuf contract
 payment-service/        Extracted provider process and persistent ledger
+web/                    Optional engineering UI foundation for inspecting CommerceCore
 scripts/failure-lab/    Focused repeatable failure suites
 scripts/demo-final.sh   Real-process timeout/recovery demonstration
 docs/                   Design decisions and evidence
@@ -169,6 +197,13 @@ Start CommerceCore with its local `kafka,dev` profiles:
 ./gradlew bootRun
 ```
 
+The optional Control Room frontend provides the engineering application shell and a Store
+Simulator, a read-only Order Inspector, a development-only Event Explorer backed by persisted
+outbox and consumer-receipt evidence, and a guided Failure Lab for the provider's existing one-shot
+authorization outcomes. Its development-only Concurrency Lab runs bounded, backend-coordinated
+correctness experiments against real state; it is not a load benchmark. Run it separately with `cd web && npm install && npm run dev`; see
+[`web/README.md`](web/README.md) for configuration and scope.
+
 Payment Service exposes gRPC on `9090`, its development control/health HTTP server on `8091`, and
 its PostgreSQL on `5433`. CommerceCore uses HTTP `8080`, PostgreSQL `5432`, and Kafka `29092`.
 
@@ -188,6 +223,7 @@ docker compose stop
 
 ```http
 POST   /api/products
+GET    /api/products
 GET    /api/products/{sku}
 GET    /api/products/{sku}/inventory
 POST   /api/products/{sku}/inventory/consume
@@ -204,6 +240,7 @@ POST   /api/reservations/{id}/release
 
 POST   /api/carts/{cartId}/checkout
 GET    /api/orders/{orderId}
+GET    /api/orders/{orderId}/inspection
 POST   /api/orders/{orderId}/payment
 GET    /api/orders/{orderId}/payment
 
@@ -218,6 +255,8 @@ Development controls require explicit development profiles:
 ```http
 POST localhost:8091/api/dev/provider/next-outcome
 POST localhost:8080/api/dev/outbox/publish
+GET  localhost:8080/api/dev/events
+GET  localhost:8080/api/dev/events/{eventId}
 POST localhost:8080/api/dev/payments/{paymentId}/reconcile
 POST localhost:8080/api/dev/reconciliation/run?limit=25
 ```
