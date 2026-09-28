@@ -1,5 +1,6 @@
 package com.commercecore.cart;
 
+import jakarta.validation.Valid;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,7 @@ public class CartController {
     // twice with the same quantity is a no-op, which is what makes it safe to retry.
     @PutMapping("/{cartId}/items/{sku}")
     public ResponseEntity<Void> setItem(@PathVariable UUID cartId, @PathVariable String sku,
-        @RequestBody SetCartItemRequest request) {
+        @Valid @RequestBody SetCartItemRequest request) {
         cartService.setItemQuantity(cartId, sku, request.quantity());
         return ResponseEntity.noContent().build();
     }

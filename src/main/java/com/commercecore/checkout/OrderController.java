@@ -15,14 +15,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
     private final CheckoutService checkoutService;
+    private final OrderInspectionService orderInspectionService;
 
-    public OrderController(CheckoutService checkoutService) {
+    public OrderController(CheckoutService checkoutService, OrderInspectionService orderInspectionService) {
         this.checkoutService = checkoutService;
+        this.orderInspectionService = orderInspectionService;
     }
 
     @GetMapping("/{orderId}")
     public OrderResponse get(@PathVariable UUID orderId) {
         Order order = checkoutService.getOrder(orderId);
         return OrderResponse.of(order, checkoutService.getItems(orderId));
+    }
+
+    @GetMapping("/{orderId}/inspection")
+    public OrderInspectionResponse inspect(@PathVariable UUID orderId) {
+        return orderInspectionService.inspect(orderId);
     }
 }

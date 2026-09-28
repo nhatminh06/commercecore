@@ -1,5 +1,6 @@
 package com.commercecore.inventory;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +25,7 @@ public class InventoryController {
     }
 
     @PostMapping("/consume")
-    public ResponseEntity<Void> consume(@PathVariable String sku, @RequestBody ConsumeInventoryRequest request) {
+    public ResponseEntity<Void> consume(@PathVariable String sku, @Valid @RequestBody ConsumeInventoryRequest request) {
         inventoryService.consume(sku, request.quantity());
         return ResponseEntity.noContent().build();
     }

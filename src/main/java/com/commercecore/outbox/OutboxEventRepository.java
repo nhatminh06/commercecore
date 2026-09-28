@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface OutboxEventRepository extends JpaRepository<OutboxEvent, UUID> {
 
+    List<OutboxEvent> findTop100ByOrderByCreatedAtDescIdDesc();
+
     /**
      * Called from within the caller's own already-active business transaction (checkout, a
      * payment transition) — deliberately no {@code @Transactional} here, so this statement
