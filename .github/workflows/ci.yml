@@ -26,6 +26,7 @@ jobs:
           cache: gradle
       - uses: gradle/actions/setup-gradle@v4
       - run: ./gradlew clean test
+      - run: ./gradlew build
 
   frontend:
     name: Frontend production build
@@ -56,7 +57,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Validate production configuration
-        env:
-          COMMERCECORE_DB_PASSWORD: ci-only-not-a-production-secret
-          PAYMENT_DB_PASSWORD: ci-only-not-a-production-secret
-        run: docker compose -f compose.prod.yml config --quiet
+        run: |
+          scripts/validate-production-env.sh --env-file deploy/ci.production.env
+          docker compose --env-file deploy/ci.production.env -f compose.prod.yml config --quiet

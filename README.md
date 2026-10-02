@@ -17,13 +17,15 @@ service restarts, failure injection, and database inspection. Start with [the gu
 and [the final failure lab](docs/failure-lab.md).
 
 GitHub Actions validates the backend correctness suite, frontend lint/tests/production build, and
-production Compose configuration.
+production environment and Compose configuration.
 
 ## Run or deploy
 
 - Local development: `docker compose up -d`, `./gradlew bootRun`, then `cd web && npm run dev`.
-- Production VM: copy `.env.production.example`, provide independent strong database passwords,
-  then run `docker compose --env-file .env.production -f compose.prod.yml up -d --build`.
+- Local production verification: copy `.env.production.example`, set `SITE_ADDRESS=:80` and two
+  independent strong database passwords, then run `scripts/verify-production.sh`.
+- Production VM: validate with `scripts/validate-production-env.sh`, then use the operator sequence
+  in [production deployment](docs/deployment.md).
 - Full Ubuntu, firewall, Cloudflare, backup, update, and rollback instructions: [production deployment](docs/deployment.md).
 
 The intended public hostname is `commercecore.minhpham06.com`, but this README does not advertise a

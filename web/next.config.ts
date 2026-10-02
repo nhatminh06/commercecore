@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
   async rewrites() {
     const rewrites = [
       {
+        source: "/healthz",
+        destination: `${commerceCoreApiUrl}/actuator/health/readiness`,
+      },
+      {
         source: "/api/commercecore/:path*",
         destination: `${commerceCoreApiUrl}/api/:path*`,
       },

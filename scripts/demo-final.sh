@@ -3,13 +3,30 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
+if [[ ${1:-} == "--help" || ${1:-} == "-h" ]]; then
+  cat <<'EOF'
+Usage: scripts/demo-final.sh
+
+Run the local-development-only timeout-after-provider-commit scenario. Requires
+docker compose dependencies and CommerceCore from ./gradlew bootRun.
+EOF
+  exit 0
+fi
+[[ $# -eq 0 ]] || { echo "Unknown argument: $1" >&2; exit 2; }
+
 for command in curl jq docker; do
   command -v "$command" >/dev/null || { echo "Missing prerequisite: $command" >&2; exit 1; }
 done
 
 echo "Prerequisites: docker compose up -d, ./gradlew bootRun, curl, jq."
-curl -fsS localhost:8091/actuator/health >/dev/null
-curl -fsS localhost:8080/api/products/__failure_lab_probe__ >/dev/null 2>&1 || true
+for endpoint in localhost:8091/actuator/health localhost:8080/actuator/health/readiness; do
+  ready=false
+  for _ in $(seq 1 60); do
+    if curl -fsS --max-time 2 "$endpoint" >/dev/null 2>&1; then ready=true; break; fi
+    sleep 1
+  done
+  [[ "$ready" == true ]] || { echo "Timed out waiting for $endpoint" >&2; exit 1; }
+done
 
 run_id="$(date +%s)"
 sku="FINAL-LAB-$run_id"

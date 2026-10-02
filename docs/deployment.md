@@ -39,13 +39,16 @@ openssl rand -base64 36   # generate a different Payment DB password
 chmod 600 .env.production
 $EDITOR .env.production
 
+scripts/validate-production-env.sh --env-file .env.production
 docker compose --env-file .env.production -f compose.prod.yml config --quiet
 docker compose --env-file .env.production -f compose.prod.yml build
-docker compose --env-file .env.production -f compose.prod.yml up -d
+docker compose --env-file .env.production -f compose.prod.yml up -d --wait --wait-timeout 240
 ```
 
 Do not use example names such as `password`, `postgres`, `admin`, or `commercecore` as passwords.
-The environment file must remain untracked and must not be pasted into logs or support output.
+The environment file must remain untracked and must not be pasted into logs or support output. The
+validator reads it as data (it does not source it), rejects missing/placeholder/short or equal
+passwords, validates the host and PostgreSQL role names, and rejects development profile settings.
 
 ## Verify before DNS
 
@@ -54,19 +57,39 @@ docker compose --env-file .env.production -f compose.prod.yml ps
 docker compose --env-file .env.production -f compose.prod.yml logs --tail=100 commercecore
 docker compose --env-file .env.production -f compose.prod.yml logs --tail=100 payment-service
 docker compose --env-file .env.production -f compose.prod.yml logs --tail=100 kafka
-# Before DNS/TLS, temporarily set SITE_ADDRESS=:80 in .env.production, apply it, and test:
-docker compose --env-file .env.production -f compose.prod.yml up -d reverse-proxy
-curl --fail http://127.0.0.1/
+# Before DNS/TLS, temporarily set SITE_ADDRESS=:80 in .env.production, then run:
+scripts/validate-production-env.sh --env-file .env.production --allow-local-hostname
+scripts/smoke-production.sh --base-url http://127.0.0.1
 ```
 
-All services should be healthy. The last command verifies the full reverse-proxy path before a
-public certificate can exist. Confirm the Store lists the three seeded products and that a cart survives a normal page
-refresh. Confirm `POST /api/commercecore/dev/experiments/inventory-contention` and
-`/api/payment-provider/dev/provider/next-outcome` return 404 through the public origin.
+All services should be healthy. The smoke test waits on `/healthz`, verifies the frontend and seeded
+catalog, and proves development, webhook, and administrative mutation paths return 404 through the
+public origin. The readiness response is `UP` only when CommerceCore, its PostgreSQL database,
+Kafka TCP listener, and Payment Service gRPC listener are reachable. Confirm separately that a cart
+survives a normal page refresh.
+
+In the `portfolio,kafka` profile, CommerceCore polls its transactional outbox on a short fixed delay
+and publishes committed events to Kafka. This is what lets a normal public-demo payment drive the
+existing order/reservation workflow without exposing the development-only force-publish endpoint.
 
 Inspect host listeners with `sudo ss -ltnp`. Aside from administrative SSH, only `:80` and `:443`
 should be public listeners from this stack. Compose uses `expose`, not `ports`, for every internal
 service.
+
+For a complete local rehearsal, use a dedicated env file with `SITE_ADDRESS=:80`:
+
+```bash
+scripts/verify-production.sh --env-file .env.production --base-url http://localhost
+scripts/stop-production.sh --env-file .env.production
+```
+
+The verifier validates, renders Compose, builds, starts with a bounded health wait, and runs the
+read-only smoke checks. It intentionally leaves containers and named volumes intact. The stop
+command stops containers without deleting volumes. Database passwords initialize PostgreSQL only
+when its volume is first created; changing an env-file password later does not rotate an existing
+database role password. Use one stable protected env file per deployment. If local ports 80/443 are
+occupied, set `HTTP_PORT=8088` and `HTTPS_PORT=8443` in the local-only env file and pass
+`--base-url http://localhost:8088`; production should retain the defaults.
 
 ## Cloudflare activation
 
@@ -86,6 +109,10 @@ Caddy has obtained a valid origin certificate. Do not add AAAA until working IPv
 firewall rules are verified. Then verify the intended
 public routes `/`, `/store`, and `/orders`; verify `/events`, `/failure-lab`, and `/experiments` show
 read-only explanations; and repeat the blocked-development-API checks over HTTPS.
+
+```bash
+scripts/smoke-production.sh --base-url https://commercecore.minhpham06.com
+```
 
 ## Persistence, restart, and reboot
 
