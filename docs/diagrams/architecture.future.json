@@ -1,0 +1,32 @@
+{
+  "title": "CommerceCore Consistency Lab · proposed",
+  "subtitle": "M15a oracle exists for synthetic fixtures · every other lab component below is PLANNED / NOT IMPLEMENTED",
+  "description": "Future test-only scenario generator and fault injector exercise isolated CommerceCore systems. Planned collectors feed an independent oracle and history checker. Planned replay engine and debugger inspect evidence offline. Only the M15a synthetic oracle currently exists.",
+  "zones": [
+    {"label": "PLANNED / NOT IMPLEMENTED · TEST-ONLY RUNNER", "box": [40, 115, 600, 645], "fill": "#ecfdf5"},
+    {"label": "EXISTING APPLICATION · ISOLATED TEST RUN", "box": [675, 115, 335, 645], "fill": "#f1f5f9"},
+    {"label": "OFFLINE VERIFICATION", "box": [1045, 115, 355, 645], "fill": "#eff6ff"}
+  ],
+  "nodes": [
+    {"id": "scenario", "box": [70, 190, 255, 78], "lines": ["Scenario / workload", "PLANNED · bounded inputs"], "stroke": "#0f766e"},
+    {"id": "fault", "box": [360, 190, 250, 78], "lines": ["Fault injector", "PLANNED · test network"], "stroke": "#0f766e"},
+    {"id": "collector", "box": [160, 475, 350, 88], "lines": ["Evidence collectors", "PLANNED · DB + operation history", "Coverage / provenance required"], "stroke": "#0f766e"},
+    {"id": "app", "box": [705, 200, 275, 95], "lines": ["CommerceCore + provider", "Existing processes", "Separate PostgreSQL stores"]},
+    {"id": "kafka", "box": [705, 350, 275, 78], "lines": ["Kafka + consumers", "Existing at-least-once path"]},
+    {"id": "oracle", "box": [1075, 185, 295, 88], "lines": ["Independent oracle", "M15a: synthetic only", "Real evidence: PLANNED"], "stroke": "#2563eb"},
+    {"id": "history", "box": [1075, 325, 295, 78], "lines": ["History checker", "PLANNED / NOT IMPLEMENTED"], "stroke": "#0f766e"},
+    {"id": "replay", "box": [1075, 465, 295, 78], "lines": ["Replay / minimization", "PLANNED / NOT IMPLEMENTED"], "stroke": "#0f766e"},
+    {"id": "debugger", "box": [1075, 605, 295, 78], "lines": ["Interactive debugger", "PLANNED / NOT IMPLEMENTED"], "stroke": "#0f766e"}
+  ],
+  "edges": [
+    {"type": "planned", "points": [[325, 230], [705, 230]], "label": "test operations →", "label_at": [500, 218]},
+    {"type": "planned", "points": [[610, 250], [650, 250], [650, 285], [705, 285]], "label": "faults →", "label_at": [616, 238]},
+    {"type": "event", "points": [[845, 295], [845, 350]], "label": "events", "label_at": [857, 330]},
+    {"type": "planned", "points": [[705, 395], [590, 395], [590, 519], [510, 519]], "label": "← observations", "label_at": [568, 385]},
+    {"type": "planned", "points": [[510, 495], [1030, 495], [1030, 240], [1075, 240]], "label": "evidence →", "label_at": [948, 483]},
+    {"type": "planned", "points": [[510, 540], [1018, 540], [1018, 365], [1075, 365]], "label": "history →", "label_at": [930, 528]},
+    {"type": "planned", "points": [[1222, 403], [1222, 465]], "label": "counterexample", "label_at": [1234, 440]},
+    {"type": "planned", "points": [[1222, 543], [1222, 605]], "label": "bundle", "label_at": [1234, 580]}
+  ],
+  "source_refs": ["tools/consistency_lab/oracle.py", "docs/roadmap/CONSISTENCY-LAB-ROADMAP.md", "CLAUDE.md"]
+}

@@ -1,0 +1,37 @@
+{
+  "title": "CommerceCore · current architecture",
+  "subtitle": "Implemented processes and internal modules · source inspected at 6fd66e7 · production edge shown conditionally",
+  "description": "Browser reaches Next.js through Caddy in production. Next.js calls the modular CommerceCore Spring Boot app by REST. CommerceCore owns its PostgreSQL store, uses gRPC to a separate Payment Service with its own PostgreSQL, and publishes outbox events to Kafka. Two consumer groups receive events independently.",
+  "zones": [
+    {"label": "CLIENT / EDGE", "box": [40, 112, 280, 650], "fill": "#eff6ff"},
+    {"label": "COMMERCECORE · ONE SPRING BOOT PROCESS", "box": [350, 112, 650, 650], "fill": "#f1f5f9"},
+    {"label": "SEPARATE PROCESSES", "box": [1030, 112, 370, 650], "fill": "#f5f3ff"}
+  ],
+  "nodes": [
+    {"id": "browser", "box": [65, 165, 230, 66], "lines": ["Browser", "User / engineering UI"]},
+    {"id": "caddy", "box": [65, 275, 230, 66], "lines": ["Caddy edge", "Production Compose only"]},
+    {"id": "next", "box": [65, 385, 230, 76], "lines": ["Next.js Control Room", "Store + inspection + labs"]},
+    {"id": "catalog", "box": [380, 195, 260, 65], "lines": ["Catalog / cart", "Internal Java modules"]},
+    {"id": "inventory", "box": [680, 195, 270, 65], "lines": ["Inventory / reservations", "Internal Java modules"]},
+    {"id": "checkout", "box": [380, 295, 260, 65], "lines": ["Checkout / orders", "Internal Java modules"]},
+    {"id": "payment", "box": [680, 295, 270, 65], "lines": ["Payment / reconciliation", "Local observation + lookup"]},
+    {"id": "outbox", "box": [380, 415, 260, 75], "lines": ["Outbox + publisher", "Portfolio+kafka: scheduled"]},
+    {"id": "consumers", "box": [680, 415, 270, 85], "lines": ["Two Kafka consumers", "Proof + order workflow", "Separate durable receipts"]},
+    {"id": "commerce_db", "box": [485, 605, 380, 72], "lines": ["CommerceCore PostgreSQL", "Orders, stock, outbox, receipts"]},
+    {"id": "provider", "box": [1060, 235, 310, 78], "lines": ["gRPC Payment Service", "Simulated provider process"]},
+    {"id": "provider_db", "box": [1060, 365, 310, 72], "lines": ["Provider PostgreSQL", "Request identity + outcome"]},
+    {"id": "kafka", "box": [1060, 555, 310, 82], "lines": ["Kafka · commerce.events", "At least once delivery"]}
+  ],
+  "edges": [
+    {"type": "rest", "points": [[180, 231], [180, 275]], "label": "HTTPS", "label_at": [192, 256]},
+    {"type": "rest", "points": [[180, 341], [180, 385]], "label": "HTTP", "label_at": [192, 366]},
+    {"type": "rest", "points": [[295, 423], [335, 423], [335, 322], [380, 322]], "label": "REST →", "label_at": [302, 410]},
+    {"type": "db", "points": [[510, 490], [510, 605]], "label": "atomic write", "label_at": [522, 555]},
+    {"type": "db", "points": [[815, 500], [815, 605]], "label": "receipts", "label_at": [827, 555]},
+    {"type": "grpc", "points": [[950, 327], [1015, 327], [1015, 274], [1060, 274]], "label": "gRPC →", "label_at": [958, 315]},
+    {"type": "db", "points": [[1215, 313], [1215, 365]], "label": "local DB", "label_at": [1227, 347]},
+    {"type": "event", "points": [[640, 460], [1020, 460], [1020, 595], [1060, 595]], "label": "publish →", "label_at": [962, 449]},
+    {"type": "event", "points": [[1060, 619], [1010, 619], [1010, 515], [950, 515], [950, 460]], "label": "← group delivery", "label_at": [1010, 541]}
+  ],
+  "source_refs": ["compose.prod.yml", "deploy/Caddyfile", "web/app", "src/main/java/com/commercecore/checkout/CheckoutController.java", "src/main/java/com/commercecore/payment/GrpcPaymentProviderClient.java", "src/main/java/com/commercecore/outbox/OutboxPublisher.java", "src/main/java/com/commercecore/outbox/PortfolioOutboxPublishingSchedule.java", "src/main/java/com/commercecore/kafka/KafkaEventReceiptConsumer.java", "src/main/java/com/commercecore/checkout/OrderPaymentWorkflowConsumer.java", "payment-service/src/main/java/com/commercecore/paymentservice/PaymentProviderGrpcService.java", "src/main/resources/db/migration/V8__add_transactional_outbox.sql"]
+}

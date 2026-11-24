@@ -199,6 +199,8 @@ docker compose exec kafka /opt/kafka/bin/kafka-consumer-groups.sh \
 
 The lab does not establish exactly-once transport, global Kafka ordering, multi-broker availability,
 multi-region durability, zero downtime, payment security, PCI compliance, or exhaustive schedule
-verification. The provider is simulated; gRPC is plaintext and unauthenticated; reconciliation and
-outbox publication are manually triggered; Kafka is one local replication-factor-1 broker; there
-is no automatic refund, shipping, fulfillment, operator UI, Redis, Kubernetes, or frontend.
+verification. The provider is simulated; gRPC is plaintext and unauthenticated; reconciliation is
+manual, while outbox publication is scheduled only with the `portfolio` and `kafka` profiles;
+Kafka is one local replication-factor-1 broker; there is no automatic refund,
+shipping, fulfillment, operator UI, Redis, or Kubernetes. The optional Next.js Control Room is an
+engineering UI, not a complete customer storefront.

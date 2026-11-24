@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "run_id": "synthetic-example",
+  "evidence_kind": "synthetic_fixture",
+  "sections": {
+    "inventory": {"source": "commercecore.inventory", "scope": "all_rows_at_one_db_snapshot", "snapshot_id": "example-1", "completeness": "attested", "rows": [{"sku": "SKU", "available_quantity": 2}]},
+    "orders": {"source": "commercecore.orders", "scope": "all_rows_at_one_db_snapshot", "snapshot_id": "example-1", "completeness": "attested", "rows": [{"id": "order-1", "status": "CONFIRMED"}]},
+    "inventory_reservations": {"source": "commercecore.inventory_reservations", "scope": "all_rows_at_one_db_snapshot", "snapshot_id": "example-1", "completeness": "attested", "rows": [{"id": "reservation-1", "sku": "SKU", "quantity": 1, "status": "CONFIRMED", "order_id": "order-1"}]},
+    "checkout_idempotency": {"source": "commercecore.checkout_idempotency", "scope": "all_rows_at_one_db_snapshot", "snapshot_id": "example-1", "completeness": "attested", "rows": [{"idempotency_key": "key-1", "cart_id": "cart-1", "order_id": "order-1"}]}
+  }
+}

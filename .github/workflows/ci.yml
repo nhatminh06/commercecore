@@ -13,6 +13,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  consistency-lab:
+    name: Offline oracle qualification
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m unittest discover -s tools/consistency_lab -p 'test_*.py'
+      - name: Verify labeled synthetic fixture
+        run: |
+          python tools/consistency_lab/oracle.py tools/consistency_lab/fixtures/valid.json | python -c 'import json,sys; r=json.load(sys.stdin); assert r["run_id"] == "synthetic-example" and {x["property"] for x in r["results"]} == {"inventory_nonnegative", "checkout_identity", "order_reservation_state"} and all(x["verdict"] == "PASS" for x in r["results"])'
+
   backend:
     name: Backend tests
     runs-on: ubuntu-latest
