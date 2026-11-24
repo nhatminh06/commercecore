@@ -19,6 +19,17 @@ and [the final failure lab](docs/failure-lab.md).
 GitHub Actions validates the backend correctness suite, frontend lint/tests/production build, and
 production environment and Compose configuration.
 
+## Consistency Lab
+
+The test-only [Consistency Lab](tools/consistency_lab/README.md) records bounded, read-only
+PostgreSQL snapshots from CommerceCore and its provider, exercises controlled gRPC faults and
+seeded concurrent calls, then checks operation histories independently. Offline replay and a
+self-contained [execution debugger](tools/consistency_lab/M21-EXECUTION-DEBUGGER.md) make the
+evidence inspectable. See the [M22 qualification and reproduction matrix](docs/roadmap/M22-QUALIFICATION.md)
+for exact commands, results, and limits. Its synthetic counterexamples test the checker; they
+are not observed CommerceCore defects. These experiments do not establish global linearizability
+or production readiness.
+
 ## Run or deploy
 
 - Local development: `docker compose up -d`, `./gradlew bootRun`, then `cd web && npm run dev`.
