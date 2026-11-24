@@ -4,6 +4,8 @@ M18's test-only seeded concurrent workload and versioned observed-history contra
 
 M19's [independent bounded history checker](M19-HISTORY-CHECKER.md) evaluates those histories against scoped inventory and checkout sequential models. It returns INCONCLUSIVE without an explicit exclusive-scope declaration and never treats a matching run ID as cross-store proof.
 
+M20's [replay bundle and reduction tool](M20-REPLAY-REDUCTION.md) preserves hashed original histories, reproduces offline checker verdicts, and labels reduced synthetic counterexamples separately from captured executions.
+
 Run from the repository root:
 
 ```sh
