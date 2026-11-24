@@ -116,9 +116,9 @@ class ReplayTest(unittest.TestCase):
         with self.assertRaisesRegex(InvalidHistory, "unsupported replay manifest"):
             load_bundle(folder)
 
-    def test_sensitive_free_text_is_rejected_before_copy(self):
+    def test_unexpected_free_text_is_rejected_before_copy(self):
         case = history()
-        case["observations"][1]["rejectionCode"] = "password=do-not-retain"
+        case["observations"][1]["rejectionCode"] = "unexpected value"
         with self.assertRaisesRegex(InvalidHistory, "rejection-code"):
             self.bundle(case)
         self.assertFalse((self.root / "bundle").exists())
