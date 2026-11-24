@@ -38,8 +38,6 @@ class PostgreSQLRecorderTest(unittest.TestCase):
                 time.sleep(0.2)
             else:
                 raise RuntimeError("isolated test database could not be created: " + created.stderr.strip())
-            cls.run_cmd(["docker", "exec", cls.container, "psql", "-U", "postgres", "-v", "ON_ERROR_STOP=1",
-                         "-c", "CREATE DATABASE payment_provider_lab_m16"])
             for _ in range(60):
                 logs = cls.run_cmd(["docker", "logs", cls.container])
                 if (logs.stdout + logs.stderr).count("database system is ready to accept connections") >= 2:
@@ -47,6 +45,8 @@ class PostgreSQLRecorderTest(unittest.TestCase):
                 time.sleep(0.2)
             else:
                 raise RuntimeError("isolated PostgreSQL did not finish initialization")
+            cls.run_cmd(["docker", "exec", cls.container, "psql", "-U", "postgres", "-v", "ON_ERROR_STOP=1",
+                         "-c", "CREATE DATABASE payment_provider_lab_m16"])
             migrations = Path(__file__).resolve().parents[2] / "src/main/resources/db/migration"
             for migration in sorted(migrations.glob("V*__*.sql"), key=lambda p: int(p.name.split("__")[0][1:])):
                 cls.admin(migration.read_text())
