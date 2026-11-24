@@ -13,6 +13,7 @@ V2_COLUMNS = {
     "orders": ["id", "status", "total_amount", "created_at"],
     "inventory_reservations": ["id", "sku", "quantity", "status", "expires_at", "order_id"],
     "checkout_idempotency": ["idempotency_key", "cart_id", "order_id", "created_at"],
+    "provider_payments": ["provider_request_id", "amount", "status", "provider_reference", "created_at"],
 }
 
 
@@ -20,7 +21,7 @@ class EvidenceError(ValueError):
     pass
 
 
-def _section(bundle, name, fields, identity):
+def _section(bundle, name, fields, identity, source="commercecore"):
     section = bundle.get("sections", {}).get(name)
     if section is None:
         return None
@@ -29,7 +30,7 @@ def _section(bundle, name, fields, identity):
         expected |= {"columns", "row_count"}
     if not isinstance(section, dict) or set(section) != expected or not isinstance(section.get("rows"), list):
         raise EvidenceError(f"{name}: expected rows array")
-    if section.get("source") != f"commercecore.{name}" or section.get("scope") != "all_rows_at_one_db_snapshot" or not isinstance(section.get("snapshot_id"), str) or not section["snapshot_id"]:
+    if section.get("source") != f"{source}.{name}" or section.get("scope") != "all_rows_at_one_db_snapshot" or not isinstance(section.get("snapshot_id"), str) or not section["snapshot_id"]:
         raise EvidenceError(f"{name}: invalid source or scope")
     allowed = ("attested", "unknown") if bundle["schema_version"] == 1 else ("verified", "unknown")
     if type(section.get("completeness")) is not str or section["completeness"] not in allowed:
@@ -62,17 +63,21 @@ def check(bundle):
         raise EvidenceError("unsupported schema version")
     if not isinstance(bundle["run_id"], str) or not bundle["run_id"]:
         raise EvidenceError("invalid run_id")
+    provider = version == 2 and bundle["evidence_kind"] == "provider_postgres_snapshot"
     if version == 1:
         if "capture" in bundle or bundle["evidence_kind"] != "synthetic_fixture":
             raise EvidenceError("v1 supports only synthetic fixtures")
     else:
         capture = bundle.get("capture")
-        if bundle["evidence_kind"] != "postgres_snapshot" or not isinstance(capture, dict) or set(capture) != {
+        if bundle["evidence_kind"] not in ("postgres_snapshot", "provider_postgres_snapshot") or not isinstance(capture, dict) or set(capture) != {
             "source_id", "host", "port", "database", "role", "captured_at", "transaction_snapshot",
             "transaction_isolation", "transaction_read_only"
         }:
             raise EvidenceError("invalid v2 capture provenance")
-        if capture["source_id"] != "commercecore-local-test" or capture["host"] not in ("127.0.0.1", "::1", "localhost") or not re.fullmatch(r"commercecore_lab_[a-zA-Z0-9_]+", str(capture["database"])) or not re.fullmatch(r"lab_reader(?:_[a-zA-Z0-9_]+)?", str(capture["role"])) or type(capture["port"]) is not int or not 1 <= capture["port"] <= 65535 or capture["transaction_isolation"] != "repeatable read" or capture["transaction_read_only"] is not True or not isinstance(capture["transaction_snapshot"], str) or not capture["transaction_snapshot"]:
+        source_id = "provider-local-test" if provider else "commercecore-local-test"
+        db_pattern = r"payment_provider_lab_[a-zA-Z0-9_]+" if provider else r"commercecore_lab_[a-zA-Z0-9_]+"
+        role_pattern = r"lab_provider_reader(?:_[a-zA-Z0-9_]+)?" if provider else r"lab_reader(?:_[a-zA-Z0-9_]+)?"
+        if capture["source_id"] != source_id or capture["host"] not in ("127.0.0.1", "::1", "localhost") or not re.fullmatch(db_pattern, str(capture["database"])) or not re.fullmatch(role_pattern, str(capture["role"])) or type(capture["port"]) is not int or not 1 <= capture["port"] <= 65535 or capture["transaction_isolation"] != "repeatable read" or capture["transaction_read_only"] is not True or not isinstance(capture["transaction_snapshot"], str) or not capture["transaction_snapshot"]:
             raise EvidenceError("unqualified v2 capture provenance")
         try:
             uuid.UUID(bundle["run_id"])
@@ -81,10 +86,30 @@ def check(bundle):
             raise EvidenceError("invalid v2 run identity or capture time") from exc
         if captured_at.tzinfo is None:
             raise EvidenceError("v2 capture time requires an offset")
-    if not isinstance(bundle["sections"], dict) or set(bundle["sections"]) - {
-        "inventory", "orders", "inventory_reservations", "checkout_idempotency"
-    }:
+    allowed_sections = {"provider_payments"} if provider else {
+        "inventory", "orders", "inventory_reservations", "checkout_idempotency"}
+    if not isinstance(bundle["sections"], dict) or set(bundle["sections"]) - allowed_sections:
         raise EvidenceError("invalid sections")
+
+    if provider:
+        section = _section(bundle, "provider_payments", {"provider_request_id": str, "status": str,
+                           "provider_reference": (str, type(None))}, ("provider_request_id",), "provider")
+        if section is not None:
+            if section["snapshot_id"] != bundle["capture"]["transaction_snapshot"]:
+                raise EvidenceError("provider snapshot does not match capture")
+            for row in section["rows"]:
+                try:
+                    valid_id = str(uuid.UUID(row["provider_request_id"])) == row["provider_request_id"]
+                except ValueError:
+                    valid_id = False
+                if not valid_id or row["status"] not in ("AUTHORIZED", "DECLINED") or (row["status"] == "AUTHORIZED") != (row["provider_reference"] is not None):
+                    raise EvidenceError("provider_payments: invalid identity or outcome")
+        complete = section is not None and section["completeness"] == "verified"
+        return {"schema_version": 2, "run_id": bundle["run_id"], "results": [
+            {"property": "provider_payment_observation", "verdict": "PASS" if complete else "INCONCLUSIVE",
+             "reason": "complete provider snapshot" if complete else "missing or incomplete provider evidence"},
+            {"property": "cross_store_payment_state", "verdict": "INCONCLUSIVE",
+             "reason": "independent snapshots lack a shared observation boundary and local payment evidence"}]}
 
     inventory = _section(bundle, "inventory", {"sku": str, "available_quantity": int}, ("sku",))
     orders = _section(bundle, "orders", {"id": str, "status": str}, ("id",))

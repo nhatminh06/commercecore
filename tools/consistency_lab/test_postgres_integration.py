@@ -38,6 +38,8 @@ class PostgreSQLRecorderTest(unittest.TestCase):
                 time.sleep(0.2)
             else:
                 raise RuntimeError("isolated test database could not be created: " + created.stderr.strip())
+            cls.run_cmd(["docker", "exec", cls.container, "psql", "-U", "postgres", "-v", "ON_ERROR_STOP=1",
+                         "-c", "CREATE DATABASE payment_provider_lab_m16"])
             for _ in range(60):
                 logs = cls.run_cmd(["docker", "logs", cls.container])
                 if (logs.stdout + logs.stderr).count("database system is ready to accept connections") >= 2:
@@ -62,6 +64,16 @@ class PostgreSQLRecorderTest(unittest.TestCase):
                 GRANT USAGE ON SCHEMA public TO lab_reader;
                 GRANT SELECT ON inventory,orders,inventory_reservations,checkout_idempotency TO lab_reader;
             """)
+            provider_migration = Path(__file__).resolve().parents[2] / "payment-service/src/main/resources/db/migration/V1__create_provider_payments.sql"
+            cls.admin(provider_migration.read_text(), database="payment_provider_lab_m16")
+            cls.admin("""
+                INSERT INTO provider_payments VALUES
+                ('00000000-0000-4000-8000-000000000016',1.00,'AUTHORIZED','pay_test',now());
+                CREATE ROLE lab_provider_reader LOGIN PASSWORD 'provider-reader-test-password';
+                GRANT CONNECT ON DATABASE payment_provider_lab_m16 TO lab_provider_reader;
+                GRANT USAGE ON SCHEMA public TO lab_provider_reader;
+                GRANT SELECT ON provider_payments TO lab_provider_reader;
+            """, database="payment_provider_lab_m16")
             cls.temp = tempfile.TemporaryDirectory(prefix="commercecore-lab-psql-")
             cls.wrapper = Path(cls.temp.name) / "psql"
             cls.wrapper.write_text("#!/bin/sh\nexec docker exec -i -e \"PGPASSWORD=$PGPASSWORD\" " + cls.container + " psql \"$@\"\n")
@@ -83,13 +95,60 @@ class PostgreSQLRecorderTest(unittest.TestCase):
         return result
 
     @classmethod
-    def admin(cls, query):
+    def admin(cls, query, database="commercecore_lab_m16"):
         cls.run_cmd(["docker", "exec", "-i", cls.container, "psql", "-U", "postgres",
-                 "-d", "commercecore_lab_m16", "-v", "ON_ERROR_STOP=1"], input=query)
+                 "-d", database, "-v", "ON_ERROR_STOP=1"], input=query)
 
     def get_bundle(self):
         return capture("00000000-0000-4000-8000-000000000016", "127.0.0.1", 5432,
                        "commercecore_lab_m16", "lab_reader", "reader-test-password", str(self.wrapper))
+
+    def get_provider_bundle(self):
+        return capture("00000000-0000-4000-8000-000000000016", "127.0.0.1", 5432,
+                       "payment_provider_lab_m16", "lab_provider_reader", "provider-reader-test-password",
+                       str(self.wrapper), store="provider")
+
+    def test_provider_capture_and_read_only_role(self):
+        bundle = self.get_provider_bundle()
+        self.assertEqual([r["verdict"] for r in check(bundle)["results"]], ["PASS", "INCONCLUSIVE"])
+        self.assertEqual(bundle["sections"]["provider_payments"]["row_count"], 1)
+        self.assertEqual(set(bundle["sections"]["provider_payments"]["rows"][0]),
+                         {"provider_request_id", "status", "provider_reference"})
+        self.assertNotIn("provider-reader-test-password", json.dumps(bundle))
+        attempted_write = self.run_cmd(["env", "PGPASSWORD=provider-reader-test-password", str(self.wrapper),
+            "-X", "-qAt", "-v", "ON_ERROR_STOP=1", "-h", "127.0.0.1", "-U", "lab_provider_reader",
+            "-d", "payment_provider_lab_m16", "-c", "UPDATE provider_payments SET status='DECLINED'"], check=False)
+        self.assertNotEqual(attempted_write.returncode, 0)
+        self.assertIn("permission denied", attempted_write.stderr)
+
+    def test_provider_schema_drift_and_permission_denial(self):
+        self.admin("ALTER TABLE provider_payments ADD COLUMN unexpected integer;", "payment_provider_lab_m16")
+        try:
+            with self.assertRaisesRegex(ValueError, "unexpected schema"):
+                self.get_provider_bundle()
+        finally:
+            self.admin("ALTER TABLE provider_payments DROP COLUMN unexpected;", "payment_provider_lab_m16")
+        self.admin("REVOKE SELECT ON provider_payments FROM lab_provider_reader;", "payment_provider_lab_m16")
+        try:
+            with self.assertRaisesRegex(ValueError, "database capture failed"):
+                self.get_provider_bundle()
+        finally:
+            self.admin("GRANT SELECT ON provider_payments TO lab_provider_reader;", "payment_provider_lab_m16")
+        self.admin("GRANT INSERT ON provider_payments TO lab_provider_reader;", "payment_provider_lab_m16")
+        try:
+            with self.assertRaisesRegex(ValueError, "lacks required read-only provenance"):
+                self.get_provider_bundle()
+        finally:
+            self.admin("REVOKE INSERT ON provider_payments FROM lab_provider_reader;", "payment_provider_lab_m16")
+
+    def test_provider_partial_and_deterministic_evidence(self):
+        first = self.get_provider_bundle()
+        second = self.get_provider_bundle()
+        self.assertEqual(json.dumps(first["sections"]["provider_payments"]["rows"], sort_keys=True),
+                         json.dumps(second["sections"]["provider_payments"]["rows"], sort_keys=True))
+        first["sections"]["provider_payments"]["row_count"] = 2
+        first["sections"]["provider_payments"]["completeness"] = "unknown"
+        self.assertEqual(check(first)["results"][0]["verdict"], "INCONCLUSIVE")
 
     def test_complete_capture_and_read_only_role(self):
         bundle = self.get_bundle()
