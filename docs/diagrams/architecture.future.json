@@ -1,32 +1,326 @@
 {
-  "title": "CommerceCore Consistency Lab · proposed",
-  "subtitle": "M15a oracle exists for synthetic fixtures · every other lab component below is PLANNED / NOT IMPLEMENTED",
-  "description": "Future test-only scenario generator and fault injector exercise isolated CommerceCore systems. Planned collectors feed an independent oracle and history checker. Planned replay engine and debugger inspect evidence offline. Only the M15a synthetic oracle currently exists.",
+  "title": "CommerceCore Consistency Lab \u00b7 qualified scope",
+  "subtitle": "M15\u2013M21 implemented in bounded test and offline scopes \u00b7 cross-system history remains deferred",
+  "description": "Separate local database snapshots, controlled gRPC faults, and CommerceCore service-call histories feed independent scoped checks. The evidence streams do not form a shared transaction or one cross-system timeline.",
   "zones": [
-    {"label": "PLANNED / NOT IMPLEMENTED · TEST-ONLY RUNNER", "box": [40, 115, 600, 645], "fill": "#ecfdf5"},
-    {"label": "EXISTING APPLICATION · ISOLATED TEST RUN", "box": [675, 115, 335, 645], "fill": "#f1f5f9"},
-    {"label": "OFFLINE VERIFICATION", "box": [1045, 115, 355, 645], "fill": "#eff6ff"}
+    {
+      "label": "TEST-ONLY RUNNER \u00b7 ISOLATED LOCAL EXECUTION",
+      "box": [
+        40,
+        115,
+        600,
+        645
+      ],
+      "fill": "#ecfdf5"
+    },
+    {
+      "label": "EXISTING APPLICATION \u00b7 ISOLATED TEST RUN",
+      "box": [
+        675,
+        115,
+        335,
+        645
+      ],
+      "fill": "#f1f5f9"
+    },
+    {
+      "label": "OFFLINE VERIFICATION",
+      "box": [
+        1045,
+        115,
+        355,
+        645
+      ],
+      "fill": "#eff6ff"
+    }
   ],
   "nodes": [
-    {"id": "scenario", "box": [70, 190, 255, 78], "lines": ["Scenario / workload", "PLANNED · bounded inputs"], "stroke": "#0f766e"},
-    {"id": "fault", "box": [360, 190, 250, 78], "lines": ["Fault injector", "PLANNED · test network"], "stroke": "#0f766e"},
-    {"id": "collector", "box": [160, 475, 350, 88], "lines": ["Evidence collectors", "PLANNED · DB + operation history", "Coverage / provenance required"], "stroke": "#0f766e"},
-    {"id": "app", "box": [705, 200, 275, 95], "lines": ["CommerceCore + provider", "Existing processes", "Separate PostgreSQL stores"]},
-    {"id": "kafka", "box": [705, 350, 275, 78], "lines": ["Kafka + consumers", "Existing at-least-once path"]},
-    {"id": "oracle", "box": [1075, 185, 295, 88], "lines": ["Independent oracle", "M15a: synthetic only", "Real evidence: PLANNED"], "stroke": "#2563eb"},
-    {"id": "history", "box": [1075, 325, 295, 78], "lines": ["History checker", "PLANNED / NOT IMPLEMENTED"], "stroke": "#0f766e"},
-    {"id": "replay", "box": [1075, 465, 295, 78], "lines": ["Replay / minimization", "PLANNED / NOT IMPLEMENTED"], "stroke": "#0f766e"},
-    {"id": "debugger", "box": [1075, 605, 295, 78], "lines": ["Interactive debugger", "PLANNED / NOT IMPLEMENTED"], "stroke": "#0f766e"}
+    {
+      "id": "scenario",
+      "box": [
+        70,
+        190,
+        255,
+        78
+      ],
+      "lines": [
+        "Seeded workloads",
+        "M18 \u00b7 bounded service calls"
+      ],
+      "stroke": "#0f766e"
+    },
+    {
+      "id": "fault",
+      "box": [
+        360,
+        190,
+        250,
+        78
+      ],
+      "lines": [
+        "Fault injector",
+        "M17 \u00b7 test-only gRPC proxy"
+      ],
+      "stroke": "#0f766e"
+    },
+    {
+      "id": "collector",
+      "box": [
+        160,
+        475,
+        350,
+        88
+      ],
+      "lines": [
+        "Evidence capture",
+        "M16 \u00b7 separate DB snapshots",
+        "M18 \u00b7 operation histories"
+      ],
+      "stroke": "#0f766e"
+    },
+    {
+      "id": "app",
+      "box": [
+        705,
+        200,
+        275,
+        95
+      ],
+      "lines": [
+        "CommerceCore + provider",
+        "Existing processes",
+        "Separate PostgreSQL stores"
+      ]
+    },
+    {
+      "id": "kafka",
+      "box": [
+        705,
+        350,
+        275,
+        78
+      ],
+      "lines": [
+        "Kafka + consumers",
+        "Existing at-least-once path"
+      ]
+    },
+    {
+      "id": "oracle",
+      "box": [
+        1075,
+        185,
+        295,
+        88
+      ],
+      "lines": [
+        "Independent oracle",
+        "M15\u2013M16 \u00b7 scoped snapshots",
+        "Cross-store: INCONCLUSIVE"
+      ],
+      "stroke": "#2563eb"
+    },
+    {
+      "id": "history",
+      "box": [
+        1075,
+        325,
+        295,
+        78
+      ],
+      "lines": [
+        "History checker",
+        "M19 \u00b7 conditional models"
+      ],
+      "stroke": "#0f766e"
+    },
+    {
+      "id": "replay",
+      "box": [
+        1075,
+        465,
+        295,
+        78
+      ],
+      "lines": [
+        "Replay / reduction",
+        "M20 \u00b7 offline; synthetic FAIL"
+      ],
+      "stroke": "#0f766e"
+    },
+    {
+      "id": "debugger",
+      "box": [
+        1075,
+        605,
+        295,
+        78
+      ],
+      "lines": [
+        "Execution debugger",
+        "M21 \u00b7 bounded histories"
+      ],
+      "stroke": "#0f766e"
+    }
   ],
   "edges": [
-    {"type": "planned", "points": [[325, 230], [705, 230]], "label": "test operations →", "label_at": [500, 218]},
-    {"type": "planned", "points": [[610, 250], [650, 250], [650, 285], [705, 285]], "label": "faults →", "label_at": [616, 238]},
-    {"type": "event", "points": [[845, 295], [845, 350]], "label": "events", "label_at": [857, 330]},
-    {"type": "planned", "points": [[705, 395], [590, 395], [590, 519], [510, 519]], "label": "← observations", "label_at": [568, 385]},
-    {"type": "planned", "points": [[510, 495], [1030, 495], [1030, 240], [1075, 240]], "label": "evidence →", "label_at": [948, 483]},
-    {"type": "planned", "points": [[510, 540], [1018, 540], [1018, 365], [1075, 365]], "label": "history →", "label_at": [930, 528]},
-    {"type": "planned", "points": [[1222, 403], [1222, 465]], "label": "counterexample", "label_at": [1234, 440]},
-    {"type": "planned", "points": [[1222, 543], [1222, 605]], "label": "bundle", "label_at": [1234, 580]}
+    {
+      "type": "event",
+      "points": [
+        [
+          325,
+          230
+        ],
+        [
+          705,
+          230
+        ]
+      ],
+      "label": "test operations \u2192",
+      "label_at": [
+        500,
+        218
+      ]
+    },
+    {
+      "type": "event",
+      "points": [
+        [
+          610,
+          250
+        ],
+        [
+          650,
+          250
+        ],
+        [
+          650,
+          285
+        ],
+        [
+          705,
+          285
+        ]
+      ],
+      "label": "faults \u2192",
+      "label_at": [
+        616,
+        238
+      ]
+    },
+    {
+      "type": "event",
+      "points": [
+        [
+          845,
+          295
+        ],
+        [
+          845,
+          350
+        ]
+      ],
+      "label": "events",
+      "label_at": [
+        857,
+        330
+      ]
+    },
+    {
+      "type": "event",
+      "points": [
+        [
+          510,
+          495
+        ],
+        [
+          1030,
+          495
+        ],
+        [
+          1030,
+          240
+        ],
+        [
+          1075,
+          240
+        ]
+      ],
+      "label": "DB snapshot \u2192",
+      "label_at": [
+        948,
+        483
+      ]
+    },
+    {
+      "type": "event",
+      "points": [
+        [
+          510,
+          540
+        ],
+        [
+          1018,
+          540
+        ],
+        [
+          1018,
+          365
+        ],
+        [
+          1075,
+          365
+        ]
+      ],
+      "label": "M18 calls \u2192",
+      "label_at": [
+        930,
+        528
+      ]
+    },
+    {
+      "type": "event",
+      "points": [
+        [
+          1222,
+          403
+        ],
+        [
+          1222,
+          465
+        ]
+      ],
+      "label": "M19 result",
+      "label_at": [
+        1234,
+        440
+      ]
+    },
+    {
+      "type": "event",
+      "points": [
+        [
+          1222,
+          543
+        ],
+        [
+          1222,
+          605
+        ]
+      ],
+      "label": "M20 bundle",
+      "label_at": [
+        1234,
+        580
+      ]
+    }
   ],
-  "source_refs": ["tools/consistency_lab/oracle.py", "docs/roadmap/CONSISTENCY-LAB-ROADMAP.md", "CLAUDE.md"]
+  "source_refs": [
+    "tools/consistency_lab/README.md",
+    "tools/consistency_lab/M17-NETWORK-FAULTS.md",
+    "tools/consistency_lab/M18-WORKLOAD-HISTORIES.md",
+    "tools/consistency_lab/M19-HISTORY-CHECKER.md",
+    "tools/consistency_lab/M20-REPLAY-REDUCTION.md",
+    "tools/consistency_lab/M21-EXECUTION-DEBUGGER.md"
+  ]
 }
