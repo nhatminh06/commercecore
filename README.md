@@ -99,6 +99,9 @@ limitation.
 
 ## Architecture
 
+The [source-backed current architecture diagram](docs/diagrams/architecture.current.svg) shows
+deployed processes separately from the Spring Boot application's internal modules.
+
 ```text
 REST client
     |
@@ -288,9 +291,10 @@ availability, multi-region durability, zero downtime, or production payment secu
 
 The provider is simulated. Local Compose runs one Payment Service instance and one Kafka broker
 with replication factor 1. gRPC is plaintext and unauthenticated with a statically configured
-host/port. There is no service discovery, webhook signature verification, automatic reconciliation
-or outbox scheduler, automatic refund, shipping, fulfillment, operator UI for `REQUIRES_REVIEW`,
-frontend, Redis, Kubernetes, Helm, or deployment pipeline.
+host/port. There is no service discovery, webhook signature verification, automatic reconciliation,
+automatic refund, shipping, fulfillment, operator UI for `REQUIRES_REVIEW`, Redis, Kubernetes, Helm,
+or deployment pipeline. Outbox publication is scheduled only under the `portfolio` and `kafka`
+profiles. The optional Next.js Control Room is an engineering UI, not a complete storefront.
 
 Those omissions are intentional: the repository demonstrates backend correctness boundaries, not
 production operational completeness.
