@@ -41,6 +41,31 @@ dependencies {
     testImplementation 'org.testcontainers:kafka'
 }
 
+sourceSets {
+    m17Test {
+        java.srcDir 'src/m17Test/java'
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+configurations {
+    m17TestImplementation.extendsFrom testImplementation
+    m17TestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+dependencies {
+    m17TestImplementation project(':payment-service')
+}
+
+tasks.register('m17Test', Test) {
+    description = 'Opt-in isolated gRPC network fault qualification'
+    testClassesDirs = sourceSets.m17Test.output.classesDirs
+    classpath = sourceSets.m17Test.runtimeClasspath
+    useJUnitPlatform()
+    systemProperty 'api.version', System.getProperty('api.version', '1.40')
+}
+
 dependencyManagement {
     imports {
         mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
