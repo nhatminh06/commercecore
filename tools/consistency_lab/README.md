@@ -6,6 +6,8 @@ M19's [independent bounded history checker](M19-HISTORY-CHECKER.md) evaluates th
 
 M20's [replay bundle and reduction tool](M20-REPLAY-REDUCTION.md) preserves hashed original histories, reproduces offline checker verdicts, and labels reduced synthetic counterexamples separately from captured executions.
 
+M21's [offline execution debugger](M21-EXECUTION-DEBUGGER.md) renders validated M18 histories and rechecked M20 bundles as a self-contained local HTML report. It displays observed actor intervals, scoped M19 verdicts and witnesses, and explicitly analytical M20 reductions. The viewer has no production route or runtime network dependency.
+
 Run from the repository root:
 
 ```sh

@@ -35,10 +35,10 @@ def bounded_read(path):
     return path.read_bytes()
 
 
-def checked_history(raw):
+def checked_history(raw, *, require_complete=True):
     history = json.loads(raw)
     validate(history)
-    if not history["complete"]:
+    if require_complete and not history["complete"]:
         raise InvalidHistory("bundle requires a complete M18 history")
     timestamps = [history["startedAt"], history["finishedAt"]]
     for event in history["observations"]:
@@ -48,7 +48,8 @@ def checked_history(raw):
         if event["exceptionType"] is not None and not re.fullmatch(
                 r"[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*){0,15}", event["exceptionType"]):
             raise InvalidHistory("unexpected exception-type text in history")
-    if not all(type(value) is str and ISO_TIME.fullmatch(value) for value in timestamps):
+    if not all((value is None and not require_complete) or
+               (type(value) is str and ISO_TIME.fullmatch(value)) for value in timestamps):
         raise InvalidHistory("unexpected timestamp text in history")
     return history
 
