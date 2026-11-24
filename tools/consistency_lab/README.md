@@ -2,6 +2,8 @@
 
 M18's test-only seeded concurrent workload and versioned observed-history contract are documented in [M18 workload histories](M18-WORKLOAD-HISTORIES.md). Its operation histories are separate from M16 database evidence and are not oracle verdicts.
 
+M19's [independent bounded history checker](M19-HISTORY-CHECKER.md) evaluates those histories against scoped inventory and checkout sequential models. It returns INCONCLUSIVE without an explicit exclusive-scope declaration and never treats a matching run ID as cross-store proof.
+
 Run from the repository root:
 
 ```sh
