@@ -1,0 +1,198 @@
+[
+  {
+    "id": "inventory",
+    "title": "Observed inventory reservations",
+    "sourceKind": "captured_test_execution",
+    "scenario": "inventory_reserve",
+    "property": "inventory_reservation_history",
+    "verdict": "PASS",
+    "operations": 4,
+    "runId": "1b94dfcb-906a-4430-ba60-2d1c0b9d153d",
+    "schemaVersion": 1,
+    "captureDate": "2026-11-24",
+    "captureRevision": null,
+    "captureRevisionStatus": "UNVERIFIED \u2014 not recorded by M18/M20",
+    "toolRevision": "8c7a59a0c025ab7121780e4df5b742fc9d7838cf",
+    "documentedQualificationRevision": "6c164a0c1adbc1dd03662afa0f1f5b881f6b3ba3",
+    "provenance": "test-jvm/spring-service/disposable-postgresql",
+    "qualification": "Historical local capture / fresh offline C3 recheck; no hosted execution attestation for these exact bytes.",
+    "sourceFiles": [
+      "build/consistency-lab/m22-observed/history.json",
+      "build/consistency-lab/m22-observed/manifest.json"
+    ],
+    "sourceHashes": {
+      "history.json": "0b5afc67cb5721adfe4850db202dbe1e46de04c5a9b0927a81f27e85a965e217",
+      "manifest.json": "83be6bd0ee913274885923e75cedf1e7699ec894c8e383bc94850c1572b55875"
+    },
+    "historySha256": "0b5afc67cb5721adfe4850db202dbe1e46de04c5a9b0927a81f27e85a965e217",
+    "checkerSha256": "96f6f21b43ae5047797af7676d3a29acc0e441f471a846d1e0b9b81b48119746",
+    "assumptions": [
+      "Exclusive target scope",
+      "No unrecorded writers",
+      "Logical identities match actual calls"
+    ],
+    "recordedResult": {
+      "property": "inventory_reservation_history",
+      "run_id": "1b94dfcb-906a-4430-ba60-2d1c0b9d153d",
+      "scope": "M18 observed service calls",
+      "checked_operations": 4,
+      "verdict": "PASS",
+      "reason": "a legal sequential ordering exists under the declared exclusive scope",
+      "witness": [
+        "inventory_reserve/actor-0/step-0",
+        "inventory_reserve/actor-0/step-1",
+        "inventory_reserve/actor-1/step-0",
+        "inventory_reserve/actor-1/step-1"
+      ],
+      "explored_states": 4
+    },
+    "bundleHashes": {
+      "history.json": "0b5afc67cb5721adfe4850db202dbe1e46de04c5a9b0927a81f27e85a965e217",
+      "manifest.json": "83be6bd0ee913274885923e75cedf1e7699ec894c8e383bc94850c1572b55875"
+    },
+    "report": "/reports/inventory",
+    "reportSha256": "5affb83c6a8e0136be98281a2240f1d4744886fdd015c6aacbbfa8ea6d3901f3",
+    "generatedHtmlSha256": "3f26e276efdd86e58fe68f6039f8bdb4f38e92b252950b2e880d710efaa79cbb",
+    "assetHashes": {
+      "reports/inventory.html": "5affb83c6a8e0136be98281a2240f1d4744886fdd015c6aacbbfa8ea6d3901f3",
+      "reports/inventory.js": "2134ef3da9859da2d09c89a1652475bdf2eb00086c6587161838f49e441e906f",
+      "reports/debugger.css": "d7396d09cbf7e005b2336185666dc232368d0cc81080ae090fe8630196c7f915",
+      "reports/favicon.svg": "7aa218ff3235d744ef32356edbc2b2c71e8a2a89d5cc89e73d2fddf4162d939c"
+    },
+    "changes": "Original history/bundle bytes retained. Checkout receives a new M20 manifest using an external exclusive-scope declaration. Generated M21 HTML externalizes script/style and adds a provenance banner and local CC favicon. Synthetic derivative labels say modeled rather than observed; no history redaction.",
+    "limitation": "Historical test provenance is self-reported; capture revision and producer authentication remain unverified. PASS is a possible sequential explanation, not persisted-state proof.",
+    "reproduce": "PYTHONDONTWRITEBYTECODE=1 python3 tools/consistency_lab/replay.py recheck showcase/evidence/inputs/inventory",
+    "ownerDeploymentApproval": "PENDING"
+  },
+  {
+    "id": "checkout",
+    "title": "Observed checkout retries",
+    "sourceKind": "captured_test_execution",
+    "scenario": "checkout_retry",
+    "property": "checkout_retry_history",
+    "verdict": "PASS",
+    "operations": 6,
+    "runId": "4b581447-2bcf-47d7-bbc7-4e3749f1edac",
+    "schemaVersion": 1,
+    "captureDate": "2026-11-24",
+    "captureRevision": null,
+    "captureRevisionStatus": "UNVERIFIED \u2014 not recorded by M18/M20",
+    "toolRevision": "8c7a59a0c025ab7121780e4df5b742fc9d7838cf",
+    "documentedQualificationRevision": "6c164a0c1adbc1dd03662afa0f1f5b881f6b3ba3",
+    "provenance": "test-jvm/spring-service/disposable-postgresql",
+    "qualification": "Historical local capture / fresh offline C3 recheck; no hosted execution attestation for these exact bytes.",
+    "sourceFiles": [
+      "build/consistency-lab/m18/checkout_retry.json"
+    ],
+    "sourceHashes": {
+      "checkout_retry.json": "5347f25d70d13327cb8c8f7cd774aa2dea1c1b963d998538bd534db60ca4ceb0"
+    },
+    "historySha256": "5347f25d70d13327cb8c8f7cd774aa2dea1c1b963d998538bd534db60ca4ceb0",
+    "checkerSha256": "96f6f21b43ae5047797af7676d3a29acc0e441f471a846d1e0b9b81b48119746",
+    "assumptions": [
+      "Exclusive target scope",
+      "No unrecorded writers",
+      "Logical identities match actual calls"
+    ],
+    "recordedResult": {
+      "property": "checkout_retry_history",
+      "run_id": "4b581447-2bcf-47d7-bbc7-4e3749f1edac",
+      "scope": "M18 observed service calls",
+      "checked_operations": 6,
+      "verdict": "PASS",
+      "reason": "a legal sequential ordering exists under the declared exclusive scope",
+      "witness": [
+        "checkout_retry/actor-2/step-0",
+        "checkout_retry/actor-1/step-0",
+        "checkout_retry/actor-0/step-0",
+        "checkout_retry/actor-2/step-1",
+        "checkout_retry/actor-1/step-1",
+        "checkout_retry/actor-0/step-1"
+      ],
+      "explored_states": 6
+    },
+    "bundleHashes": {
+      "history.json": "5347f25d70d13327cb8c8f7cd774aa2dea1c1b963d998538bd534db60ca4ceb0",
+      "manifest.json": "b5c81a482a9c607104172f76bcfed599c912e65138ebbd7ada285bcb883fd0d6"
+    },
+    "report": "/reports/checkout",
+    "reportSha256": "79cb6dfa63162bf0ce266f5dc6d24d5da0e927d76ec508861bcaa99683d54c81",
+    "generatedHtmlSha256": "bc406f46b74321aac098df63c38cfb2b6def71f2e56e1c692b2d2d8f57283ab8",
+    "assetHashes": {
+      "reports/checkout.html": "79cb6dfa63162bf0ce266f5dc6d24d5da0e927d76ec508861bcaa99683d54c81",
+      "reports/checkout.js": "cf427c11a765790a8fd36cbf7c0ab9b33aad7e6e1e229c02e7b403360ee3e478",
+      "reports/debugger.css": "d7396d09cbf7e005b2336185666dc232368d0cc81080ae090fe8630196c7f915",
+      "reports/favicon.svg": "7aa218ff3235d744ef32356edbc2b2c71e8a2a89d5cc89e73d2fddf4162d939c"
+    },
+    "changes": "Original history/bundle bytes retained. Checkout receives a new M20 manifest using an external exclusive-scope declaration. Generated M21 HTML externalizes script/style and adds a provenance banner and local CC favicon. Synthetic derivative labels say modeled rather than observed; no history redaction.",
+    "limitation": "Historical test provenance is self-reported; capture revision and producer authentication remain unverified. PASS is a possible sequential explanation, not persisted-state proof.",
+    "reproduce": "PYTHONDONTWRITEBYTECODE=1 python3 tools/consistency_lab/replay.py recheck showcase/evidence/inputs/checkout",
+    "ownerDeploymentApproval": "PENDING"
+  },
+  {
+    "id": "synthetic",
+    "title": "Synthetic oversell counterexample",
+    "sourceKind": "synthetic_mutation",
+    "scenario": "inventory_reserve",
+    "property": "inventory_reservation_history",
+    "verdict": "FAIL",
+    "operations": 4,
+    "runId": "00000000-0000-4000-8000-000000000019",
+    "schemaVersion": 1,
+    "captureDate": "2026-01-01",
+    "captureRevision": null,
+    "captureRevisionStatus": "UNVERIFIED \u2014 not recorded by M18/M20",
+    "toolRevision": "8c7a59a0c025ab7121780e4df5b742fc9d7838cf",
+    "documentedQualificationRevision": "6c164a0c1adbc1dd03662afa0f1f5b881f6b3ba3",
+    "provenance": "test-jvm/spring-service/disposable-postgresql",
+    "qualification": "Synthetic fixture / fresh offline C3 recheck; never an observed application execution.",
+    "sourceFiles": [
+      "build/consistency-lab/m22-synthetic/history.json",
+      "build/consistency-lab/m22-synthetic/manifest.json",
+      "build/consistency-lab/m22-synthetic/reduced_history.json",
+      "build/consistency-lab/m22-synthetic/reduction.json"
+    ],
+    "sourceHashes": {
+      "history.json": "d35da6e54fe32adab2b1aef5dadbde439f8a1bb74a98b6123020c90c6484f8a4",
+      "manifest.json": "a03424ef011f0d0bccf22f6399396017093b3cdadca1128d5ab2f126b4ea7207",
+      "reduced_history.json": "2e11252af18d495d8cba8c3b20697257be7cae8fb13ecf7fca9988061f11d61f",
+      "reduction.json": "0102fb8779fa920a961586629de0ce53b00c25c0805bf617ce30edd4e17a268e"
+    },
+    "historySha256": "d35da6e54fe32adab2b1aef5dadbde439f8a1bb74a98b6123020c90c6484f8a4",
+    "checkerSha256": "96f6f21b43ae5047797af7676d3a29acc0e441f471a846d1e0b9b81b48119746",
+    "assumptions": [
+      "Exclusive target scope",
+      "No unrecorded writers",
+      "Logical identities match actual calls"
+    ],
+    "recordedResult": {
+      "property": "inventory_reservation_history",
+      "run_id": "00000000-0000-4000-8000-000000000019",
+      "scope": "M18 observed service calls",
+      "checked_operations": 4,
+      "verdict": "FAIL",
+      "reason": "exhaustive search found no legal ordering for the observed outcomes and intervals",
+      "witness": null,
+      "explored_states": 3
+    },
+    "bundleHashes": {
+      "history.json": "d35da6e54fe32adab2b1aef5dadbde439f8a1bb74a98b6123020c90c6484f8a4",
+      "manifest.json": "a03424ef011f0d0bccf22f6399396017093b3cdadca1128d5ab2f126b4ea7207",
+      "reduced_history.json": "2e11252af18d495d8cba8c3b20697257be7cae8fb13ecf7fca9988061f11d61f",
+      "reduction.json": "0102fb8779fa920a961586629de0ce53b00c25c0805bf617ce30edd4e17a268e"
+    },
+    "report": "/reports/synthetic",
+    "reportSha256": "6e8dc02caf01d4b6454f45e7d5aeb7135a604140ef49468e93b7c856d1f78e0c",
+    "generatedHtmlSha256": "8318c8b036e1183a7d533f41645b7327689b74a95d476e4820fbe22d09a60cb1",
+    "assetHashes": {
+      "reports/synthetic.html": "6e8dc02caf01d4b6454f45e7d5aeb7135a604140ef49468e93b7c856d1f78e0c",
+      "reports/synthetic.js": "10fce38d870a93641d753b5814ca46f74c9797e6fd96ca4a6baebde9d6629cc2",
+      "reports/debugger.css": "d7396d09cbf7e005b2336185666dc232368d0cc81080ae090fe8630196c7f915",
+      "reports/favicon.svg": "7aa218ff3235d744ef32356edbc2b2c71e8a2a89d5cc89e73d2fddf4162d939c"
+    },
+    "changes": "Original history/bundle bytes retained. Checkout receives a new M20 manifest using an external exclusive-scope declaration. Generated M21 HTML externalizes script/style and adds a provenance banner and local CC favicon. Synthetic derivative labels say modeled rather than observed; no history redaction. C3.1 qualifies inherited clock, topology and checker-scope values as fixture metadata; intervals are constructed, not measured.",
+    "limitation": "Synthetic original and 4\u21922 analytical reduction qualify the checker; neither was an observed CommerceCore defect.",
+    "reproduce": "PYTHONDONTWRITEBYTECODE=1 python3 tools/consistency_lab/replay.py recheck showcase/evidence/inputs/synthetic",
+    "ownerDeploymentApproval": "PENDING"
+  }
+]

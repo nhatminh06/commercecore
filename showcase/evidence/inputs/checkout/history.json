@@ -1,0 +1,134 @@
+{
+  "schemaVersion" : 1,
+  "plan" : {
+    "schemaVersion" : 1,
+    "scenarioId" : "checkout_retry",
+    "runId" : "4b581447-2bcf-47d7-bbc7-4e3749f1edac",
+    "seed" : 33,
+    "initialStock" : 1,
+    "actorCount" : 3,
+    "operationsPerActor" : 2,
+    "timeoutMillis" : 20000,
+    "startConstraint" : "first operation starts after all actors are ready; each actor is sequential",
+    "operations" : [ {
+      "operationId" : "checkout_retry/actor-2/step-0",
+      "actorId" : 2,
+      "step" : 0,
+      "type" : "checkout_retry",
+      "logicalRequestId" : "shared-checkout-key",
+      "quantity" : 1
+    }, {
+      "operationId" : "checkout_retry/actor-2/step-1",
+      "actorId" : 2,
+      "step" : 1,
+      "type" : "checkout_retry",
+      "logicalRequestId" : "shared-checkout-key",
+      "quantity" : 1
+    }, {
+      "operationId" : "checkout_retry/actor-1/step-0",
+      "actorId" : 1,
+      "step" : 0,
+      "type" : "checkout_retry",
+      "logicalRequestId" : "shared-checkout-key",
+      "quantity" : 1
+    }, {
+      "operationId" : "checkout_retry/actor-1/step-1",
+      "actorId" : 1,
+      "step" : 1,
+      "type" : "checkout_retry",
+      "logicalRequestId" : "shared-checkout-key",
+      "quantity" : 1
+    }, {
+      "operationId" : "checkout_retry/actor-0/step-0",
+      "actorId" : 0,
+      "step" : 0,
+      "type" : "checkout_retry",
+      "logicalRequestId" : "shared-checkout-key",
+      "quantity" : 1
+    }, {
+      "operationId" : "checkout_retry/actor-0/step-1",
+      "actorId" : 0,
+      "step" : 1,
+      "type" : "checkout_retry",
+      "logicalRequestId" : "shared-checkout-key",
+      "quantity" : 1
+    } ]
+  },
+  "provenance" : "test-jvm/spring-service/disposable-postgresql",
+  "clockSource" : "System.nanoTime monotonic within test JVM",
+  "startedAt" : "2026-11-24T19:02:30.255880Z",
+  "finishedAt" : "2026-11-24T19:02:30.302522Z",
+  "quiescent" : true,
+  "complete" : true,
+  "quiescenceEvidence" : "all actor tasks terminated before history freeze",
+  "plannedCount" : 6,
+  "invokedCount" : 6,
+  "completedCount" : 6,
+  "observations" : [ {
+    "operationId" : "checkout_retry/actor-2/step-0",
+    "state" : "COMPLETED",
+    "outcome" : "SUCCESS",
+    "resultId" : "4159f9a3-8602-404e-b8f7-c039f454920d",
+    "rejectionCode" : null,
+    "exceptionType" : null,
+    "invokedNanos" : 185459,
+    "completedNanos" : 42302542,
+    "invokedAt" : "2026-11-24T19:02:30.256066Z",
+    "completedAt" : "2026-11-24T19:02:30.298182Z"
+  }, {
+    "operationId" : "checkout_retry/actor-2/step-1",
+    "state" : "COMPLETED",
+    "outcome" : "SUCCESS",
+    "resultId" : "4159f9a3-8602-404e-b8f7-c039f454920d",
+    "rejectionCode" : null,
+    "exceptionType" : null,
+    "invokedNanos" : 42311375,
+    "completedNanos" : 46533875,
+    "invokedAt" : "2026-11-24T19:02:30.298191Z",
+    "completedAt" : "2026-11-24T19:02:30.302414Z"
+  }, {
+    "operationId" : "checkout_retry/actor-1/step-0",
+    "state" : "COMPLETED",
+    "outcome" : "SUCCESS",
+    "resultId" : "4159f9a3-8602-404e-b8f7-c039f454920d",
+    "rejectionCode" : null,
+    "exceptionType" : null,
+    "invokedNanos" : 182709,
+    "completedNanos" : 36109375,
+    "invokedAt" : "2026-11-24T19:02:30.256063Z",
+    "completedAt" : "2026-11-24T19:02:30.291989Z"
+  }, {
+    "operationId" : "checkout_retry/actor-1/step-1",
+    "state" : "COMPLETED",
+    "outcome" : "SUCCESS",
+    "resultId" : "4159f9a3-8602-404e-b8f7-c039f454920d",
+    "rejectionCode" : null,
+    "exceptionType" : null,
+    "invokedNanos" : 36119209,
+    "completedNanos" : 45241667,
+    "invokedAt" : "2026-11-24T19:02:30.291999Z",
+    "completedAt" : "2026-11-24T19:02:30.301122Z"
+  }, {
+    "operationId" : "checkout_retry/actor-0/step-0",
+    "state" : "COMPLETED",
+    "outcome" : "SUCCESS",
+    "resultId" : "4159f9a3-8602-404e-b8f7-c039f454920d",
+    "rejectionCode" : null,
+    "exceptionType" : null,
+    "invokedNanos" : 179625,
+    "completedNanos" : 29626167,
+    "invokedAt" : "2026-11-24T19:02:30.256060Z",
+    "completedAt" : "2026-11-24T19:02:30.285507Z"
+  }, {
+    "operationId" : "checkout_retry/actor-0/step-1",
+    "state" : "COMPLETED",
+    "outcome" : "SUCCESS",
+    "resultId" : "4159f9a3-8602-404e-b8f7-c039f454920d",
+    "rejectionCode" : null,
+    "exceptionType" : null,
+    "invokedNanos" : 29638542,
+    "completedNanos" : 43702709,
+    "invokedAt" : "2026-11-24T19:02:30.285518Z",
+    "completedAt" : "2026-11-24T19:02:30.299583Z"
+  } ]
+}

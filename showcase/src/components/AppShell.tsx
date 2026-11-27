@@ -10,9 +10,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       <p className="sidebar-note">Correctness boundaries.<br />Explicit evidence.</p>
     </aside>
     <div className="workspace">
-      <div className="topbar"><span>CommerceCore / Showcase</span><span className="status">Local browser simulation · C2</span></div>
+      <div className="topbar"><span>CommerceCore / Showcase</span><span className="status">Local review · C3</span></div>
       <main id="main" tabIndex={-1}>{children}
-        <section className="boundary" aria-labelledby="boundary-title"><h2 id="boundary-title">Execution boundary</h2><p>This showcase includes a local browser simulation, not a live commerce service. No backend is connected. Reviewed verification artifacts and evidence viewing are reserved for C3.</p></section>
+        <section className="boundary" aria-labelledby="boundary-title"><h2 id="boundary-title">Execution boundary</h2><p>This showcase includes a local browser simulation, not a live commerce service. No backend is connected. Historical and synthetic evidence candidates are separately labeled and pending owner deployment approval.</p></section>
       </main>
       <footer><a href="https://github.com/nhatminh06/commercecore">Source repository</a><span>Local foundation · No live system status</span></footer>
     </div>

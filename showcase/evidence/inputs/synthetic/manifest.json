@@ -1,0 +1,78 @@
+{
+  "assumptions": {
+    "exclusive_target_scope": true,
+    "logical_identity_matches_calls": true,
+    "no_unrecorded_writers": true
+  },
+  "budgets": {
+    "budget_ms": 2000,
+    "max_states": 100000
+  },
+  "checker_contract": "m19-history-checker-v1",
+  "checker_file": "history_checker.py",
+  "checker_sha256": "96f6f21b43ae5047797af7676d3a29acc0e441f471a846d1e0b9b81b48119746",
+  "history_file": "history.json",
+  "history_sha256": "d35da6e54fe32adab2b1aef5dadbde439f8a1bb74a98b6123020c90c6484f8a4",
+  "original_result": {
+    "checked_operations": 4,
+    "explored_states": 3,
+    "property": "inventory_reservation_history",
+    "reason": "exhaustive search found no legal ordering for the observed outcomes and intervals",
+    "run_id": "00000000-0000-4000-8000-000000000019",
+    "scope": "M18 observed service calls",
+    "verdict": "FAIL",
+    "witness": null
+  },
+  "plan": {
+    "actorCount": 2,
+    "initialStock": 1,
+    "operations": [
+      {
+        "actorId": 0,
+        "logicalRequestId": "inventory_reserve/actor-0/step-0",
+        "operationId": "inventory_reserve/actor-0/step-0",
+        "quantity": 1,
+        "step": 0,
+        "type": "inventory_reserve"
+      },
+      {
+        "actorId": 0,
+        "logicalRequestId": "inventory_reserve/actor-0/step-1",
+        "operationId": "inventory_reserve/actor-0/step-1",
+        "quantity": 1,
+        "step": 1,
+        "type": "inventory_reserve"
+      },
+      {
+        "actorId": 1,
+        "logicalRequestId": "inventory_reserve/actor-1/step-0",
+        "operationId": "inventory_reserve/actor-1/step-0",
+        "quantity": 1,
+        "step": 0,
+        "type": "inventory_reserve"
+      },
+      {
+        "actorId": 1,
+        "logicalRequestId": "inventory_reserve/actor-1/step-1",
+        "operationId": "inventory_reserve/actor-1/step-1",
+        "quantity": 1,
+        "step": 1,
+        "type": "inventory_reserve"
+      }
+    ],
+    "operationsPerActor": 2,
+    "runId": "00000000-0000-4000-8000-000000000019",
+    "scenarioId": "inventory_reserve",
+    "schemaVersion": 1,
+    "seed": 3,
+    "startConstraint": "first operation starts after all actors are ready; each actor is sequential",
+    "timeoutMillis": 1000
+  },
+  "property": "inventory_reservation_history",
+  "provenance": "test-jvm/spring-service/disposable-postgresql",
+  "run_id": "00000000-0000-4000-8000-000000000019",
+  "scenario_id": "inventory_reserve",
+  "schema_version": 1,
+  "seed": 3,
+  "source_kind": "synthetic_mutation"
+}

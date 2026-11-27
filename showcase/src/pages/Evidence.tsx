@@ -1,14 +1,23 @@
 import { PageHeader } from '../components/PageHeader';
+import { evidence, sourceLabel, verdictLabel } from '../evidence/catalog';
 
 export function Evidence() {
   return <>
-    <PageHeader title="Evidence and reproduction" description="Results must retain source revision, provenance, assumptions, and qualification limits." />
-    <section className="panel" aria-labelledby="page-status">
-      <p className="eyebrow" id="page-status">Publication pending</p>
-      <p>Public evidence selection and privacy review remain pending. Existing qualification documentation distinguishes local execution from hosted CI coverage and does not establish global correctness.</p>
-      <ul><li><a href="https://github.com/nhatminh06/commercecore/blob/c17118e3db9250cd2d51476ecce05bbee97f4f42/docs/roadmap/M22-QUALIFICATION.md">M22 qualification and reproduction</a></li></ul>
-    <p className="help">Reviewed verification artifacts will be integrated in C3. The browser simulation is not independent backend evidence.</p>
-    </section>
-    <p className="project-links"><a href="/lab">Lab scope</a><a href="/lab/debugger">Debugger entry</a><a href="/evidence">Publication boundaries</a><a href="/walkthrough">Local simulation</a></p>
+    <PageHeader title="Evidence and reproduction" description="Original capture and fresh offline verification are separate facts. These candidates are pending owner deployment approval." />
+    <section className="panel"><h2>Three different kinds of claims</h2><ul><li>Historical locally observed bounded test executions: inventory and checkout calls, captured November 24, 2026 according to their timestamps.</li><li>Synthetic mutation and analytical reduction: checker qualification, not observed application defects.</li><li><a href="/walkthrough">Browser simulation</a>: an educational local state machine, not independent evidence.</li></ul><p>Capture Git revisions are UNVERIFIED. The M22 qualification revision and current verification tool revision are not substituted for missing capture metadata. Hashes detect isolated changes, not producer forgery. No global linearizability, exactly-once transport, or production correctness claim is made.</p></section>
+    {evidence.map(entry => <section className="panel evidence-details" key={entry.id} aria-labelledby={`evidence-${entry.id}`}>
+      <p className="eyebrow">{sourceLabel(entry.sourceKind)}</p><h2 id={`evidence-${entry.id}`}>{entry.title}</h2>
+      <p><strong>{verdictLabel(entry)}</strong> · {entry.property} · {entry.operations} operations</p>
+      <p>{entry.id === 'inventory' ? 'Four reservation calls from stock 1 contain one success and three insufficient-stock rejections.' : entry.id === 'checkout' ? 'Six checkout calls returned the same order identity. This does not prove database row or outbox counts.' : 'A constructed stock-1 oversell is inconsistent with the model. M20 retains two of four operations in an analytical counterexample; neither history is a captured defect.'}</p>
+      <p>{entry.recordedResult.reason}. {entry.limitation}</p>
+      <h3>Required assumptions</h3><ul>{entry.assumptions.map(a => <li key={a}>{a} (external declaration, not proved by JSON)</li>)}</ul>
+      <dl className="state-list"><div><dt>Run ID</dt><dd>{entry.runId}</dd></div><div><dt>{entry.sourceKind === 'synthetic_mutation' ? 'Synthetic fixture date' : 'Capture date'}</dt><dd>{entry.captureDate} (artifact-reported)</dd></div><div><dt>Capture revision</dt><dd>UNVERIFIED</dd></div><div><dt>Tool / recheck revision</dt><dd>{entry.toolRevision}</dd></div><div><dt>{entry.sourceKind === 'synthetic_mutation' ? 'Inherited fixture topology' : 'Topology'}</dt><dd>{entry.provenance}{entry.sourceKind === 'synthetic_mutation' ? ' — Inherited fixture metadata; does not describe an observed execution of this synthetic history.' : ''}</dd></div><div><dt>Qualification</dt><dd>{entry.qualification}</dd></div><div><dt>M18 schema</dt><dd>{entry.schemaVersion}</dd></div><div><dt>Original history SHA-256</dt><dd>{entry.historySha256}</dd></div><div><dt>Checker SHA-256</dt><dd>{entry.checkerSha256}</dd></div><div><dt>Generated M21 HTML SHA-256</dt><dd>{entry.generatedHtmlSha256}</dd></div><div><dt>Public derivative SHA-256</dt><dd>{entry.reportSha256}</dd></div></dl>
+      <p>Source files: {entry.sourceFiles.map(path => <code key={path}>{path} </code>)}</p><p>{entry.changes}</p>
+      <h3>Recheck these exact candidate bytes</h3><p className="help">From repository root after obtaining this C3 source, with Python 3. No Java, Docker, PostgreSQL, or backend access is needed for offline analysis.</p><pre className="command">{entry.reproduce}</pre>
+      <pre className="command">{`PYTHONDONTWRITEBYTECODE=1 python3 tools/consistency_lab/history_checker.py showcase/evidence/inputs/${entry.id}/history.json --exclusive-scope`}</pre>
+      <p>Without <code>--exclusive-scope</code>, the observed histories remain INCONCLUSIVE. A seed reproduces a plan, not a thread schedule.</p>
+      <p><a href={entry.report}>Open report</a> · <a href={`https://github.com/nhatminh06/commercecore/blob/${entry.toolRevision}/tools/consistency_lab/M19-HISTORY-CHECKER.md`}>Checker model</a></p>
+    </section>)}
+    <section className="panel"><h2>Historical backend result</h2><p>The documented local 100-buyer / 10-unit experiment recorded 10 winners, 90 failures, and stock 0. It was not rerun for this integration and is not produced by the browser simulation.</p><a href="https://github.com/nhatminh06/commercecore/blob/c17118e3db9250cd2d51476ecce05bbee97f4f42/docs/failure-lab.md">Historical result and reproduction context</a><p>The M22 local qualification notes are historical. C3 rechecked existing evidence offline; it did not execute new backend workloads.</p></section>
   </>;
 }

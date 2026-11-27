@@ -1,0 +1,68 @@
+{
+  "clockSource": "System.nanoTime monotonic within test JVM",
+  "complete": true,
+  "completedCount": 2,
+  "finishedAt": "2026-01-01T00:00:01Z",
+  "invokedCount": 2,
+  "observations": [
+    {
+      "completedAt": "2026-01-01T00:00:00Z",
+      "completedNanos": 4,
+      "exceptionType": null,
+      "invokedAt": "2026-01-01T00:00:00Z",
+      "invokedNanos": 1,
+      "operationId": "inventory_reserve/actor-0/step-0",
+      "outcome": "SUCCESS",
+      "rejectionCode": null,
+      "resultId": "20000000-0000-4000-8000-000000000019",
+      "state": "COMPLETED"
+    },
+    {
+      "completedAt": "2026-01-01T00:00:00Z",
+      "completedNanos": 5,
+      "exceptionType": null,
+      "invokedAt": "2026-01-01T00:00:00Z",
+      "invokedNanos": 2,
+      "operationId": "inventory_reserve/actor-1/step-0",
+      "outcome": "SUCCESS",
+      "rejectionCode": null,
+      "resultId": "20000000-0000-4000-8000-000000000019",
+      "state": "COMPLETED"
+    }
+  ],
+  "plan": {
+    "actorCount": 2,
+    "initialStock": 1,
+    "operations": [
+      {
+        "actorId": 0,
+        "logicalRequestId": "inventory_reserve/actor-0/step-0",
+        "operationId": "inventory_reserve/actor-0/step-0",
+        "quantity": 1,
+        "step": 0,
+        "type": "inventory_reserve"
+      },
+      {
+        "actorId": 1,
+        "logicalRequestId": "inventory_reserve/actor-1/step-0",
+        "operationId": "inventory_reserve/actor-1/step-0",
+        "quantity": 1,
+        "step": 0,
+        "type": "inventory_reserve"
+      }
+    ],
+    "operationsPerActor": 1,
+    "runId": "00000000-0000-4000-8000-000000000019",
+    "scenarioId": "inventory_reserve",
+    "schemaVersion": 1,
+    "seed": 3,
+    "startConstraint": "first operation starts after all actors are ready; each actor is sequential",
+    "timeoutMillis": 1000
+  },
+  "plannedCount": 2,
+  "provenance": "test-jvm/spring-service/disposable-postgresql",
+  "quiescenceEvidence": "all actor tasks terminated before history freeze",
+  "quiescent": true,
+  "schemaVersion": 1,
+  "startedAt": "2026-01-01T00:00:00Z"
+}
