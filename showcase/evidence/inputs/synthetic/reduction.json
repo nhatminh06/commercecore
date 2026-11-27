@@ -1,0 +1,45 @@
+{
+  "assumptions": {
+    "exclusive_target_scope": true,
+    "logical_identity_matches_calls": true,
+    "no_unrecorded_writers": true
+  },
+  "attempts": 1,
+  "final_result": {
+    "checked_operations": 2,
+    "explored_states": 3,
+    "property": "inventory_reservation_history",
+    "reason": "exhaustive search found no legal ordering for the observed outcomes and intervals",
+    "run_id": "00000000-0000-4000-8000-000000000019",
+    "scope": "M18 observed service calls",
+    "verdict": "FAIL",
+    "witness": null
+  },
+  "initial_stock": 1,
+  "kind": "derived_analytical_counterexample",
+  "locally_minimal_under_supported_deletions": true,
+  "original_operations": 4,
+  "original_sha256": "d35da6e54fe32adab2b1aef5dadbde439f8a1bb74a98b6123020c90c6484f8a4",
+  "property": "inventory_reservation_history",
+  "reduced_operations": 2,
+  "reduced_sha256": "2e11252af18d495d8cba8c3b20697257be7cae8fb13ecf7fca9988061f11d61f",
+  "schema_version": 1,
+  "steps": [
+    {
+      "attempt": 1,
+      "candidate_sha256": "2e11252af18d495d8cba8c3b20697257be7cae8fb13ecf7fca9988061f11d61f",
+      "change": "trim_last_step_each_actor",
+      "checker_result": {
+        "checked_operations": 2,
+        "explored_states": 3,
+        "property": "inventory_reservation_history",
+        "reason": "exhaustive search found no legal ordering for the observed outcomes and intervals",
+        "run_id": "00000000-0000-4000-8000-000000000019",
+        "scope": "M18 observed service calls",
+        "verdict": "FAIL",
+        "witness": null
+      },
+      "decision": "ACCEPTED"
+    }
+  ]
+}

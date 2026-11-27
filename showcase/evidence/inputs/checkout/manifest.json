@@ -1,0 +1,101 @@
+{
+  "assumptions": {
+    "exclusive_target_scope": true,
+    "logical_identity_matches_calls": true,
+    "no_unrecorded_writers": true
+  },
+  "budgets": {
+    "budget_ms": 2000,
+    "max_states": 100000
+  },
+  "checker_contract": "m19-history-checker-v1",
+  "checker_file": "history_checker.py",
+  "checker_sha256": "96f6f21b43ae5047797af7676d3a29acc0e441f471a846d1e0b9b81b48119746",
+  "history_file": "history.json",
+  "history_sha256": "5347f25d70d13327cb8c8f7cd774aa2dea1c1b963d998538bd534db60ca4ceb0",
+  "original_result": {
+    "checked_operations": 6,
+    "explored_states": 6,
+    "property": "checkout_retry_history",
+    "reason": "a legal sequential ordering exists under the declared exclusive scope",
+    "run_id": "4b581447-2bcf-47d7-bbc7-4e3749f1edac",
+    "scope": "M18 observed service calls",
+    "verdict": "PASS",
+    "witness": [
+      "checkout_retry/actor-2/step-0",
+      "checkout_retry/actor-1/step-0",
+      "checkout_retry/actor-0/step-0",
+      "checkout_retry/actor-2/step-1",
+      "checkout_retry/actor-1/step-1",
+      "checkout_retry/actor-0/step-1"
+    ]
+  },
+  "plan": {
+    "actorCount": 3,
+    "initialStock": 1,
+    "operations": [
+      {
+        "actorId": 2,
+        "logicalRequestId": "shared-checkout-key",
+        "operationId": "checkout_retry/actor-2/step-0",
+        "quantity": 1,
+        "step": 0,
+        "type": "checkout_retry"
+      },
+      {
+        "actorId": 2,
+        "logicalRequestId": "shared-checkout-key",
+        "operationId": "checkout_retry/actor-2/step-1",
+        "quantity": 1,
+        "step": 1,
+        "type": "checkout_retry"
+      },
+      {
+        "actorId": 1,
+        "logicalRequestId": "shared-checkout-key",
+        "operationId": "checkout_retry/actor-1/step-0",
+        "quantity": 1,
+        "step": 0,
+        "type": "checkout_retry"
+      },
+      {
+        "actorId": 1,
+        "logicalRequestId": "shared-checkout-key",
+        "operationId": "checkout_retry/actor-1/step-1",
+        "quantity": 1,
+        "step": 1,
+        "type": "checkout_retry"
+      },
+      {
+        "actorId": 0,
+        "logicalRequestId": "shared-checkout-key",
+        "operationId": "checkout_retry/actor-0/step-0",
+        "quantity": 1,
+        "step": 0,
+        "type": "checkout_retry"
+      },
+      {
+        "actorId": 0,
+        "logicalRequestId": "shared-checkout-key",
+        "operationId": "checkout_retry/actor-0/step-1",
+        "quantity": 1,
+        "step": 1,
+        "type": "checkout_retry"
+      }
+    ],
+    "operationsPerActor": 2,
+    "runId": "4b581447-2bcf-47d7-bbc7-4e3749f1edac",
+    "scenarioId": "checkout_retry",
+    "schemaVersion": 1,
+    "seed": 33,
+    "startConstraint": "first operation starts after all actors are ready; each actor is sequential",
+    "timeoutMillis": 20000
+  },
+  "property": "checkout_retry_history",
+  "provenance": "test-jvm/spring-service/disposable-postgresql",
+  "run_id": "4b581447-2bcf-47d7-bbc7-4e3749f1edac",
+  "scenario_id": "checkout_retry",
+  "schema_version": 1,
+  "seed": 33,
+  "source_kind": "captured_test_execution"
+}

@@ -1,0 +1,15 @@
+{
+  "inventory": {
+    "history.json": "0b5afc67cb5721adfe4850db202dbe1e46de04c5a9b0927a81f27e85a965e217",
+    "manifest.json": "83be6bd0ee913274885923e75cedf1e7699ec894c8e383bc94850c1572b55875"
+  },
+  "checkout": {
+    "checkout_retry.json": "5347f25d70d13327cb8c8f7cd774aa2dea1c1b963d998538bd534db60ca4ceb0"
+  },
+  "synthetic": {
+    "history.json": "d35da6e54fe32adab2b1aef5dadbde439f8a1bb74a98b6123020c90c6484f8a4",
+    "manifest.json": "a03424ef011f0d0bccf22f6399396017093b3cdadca1128d5ab2f126b4ea7207",
+    "reduced_history.json": "2e11252af18d495d8cba8c3b20697257be7cae8fb13ecf7fca9988061f11d61f",
+    "reduction.json": "0102fb8779fa920a961586629de0ce53b00c25c0805bf617ce30edd4e17a268e"
+  }
+}

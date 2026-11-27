@@ -1,0 +1,83 @@
+{
+  "assumptions": {
+    "exclusive_target_scope": true,
+    "logical_identity_matches_calls": true,
+    "no_unrecorded_writers": true
+  },
+  "budgets": {
+    "budget_ms": 2000,
+    "max_states": 100000
+  },
+  "checker_contract": "m19-history-checker-v1",
+  "checker_file": "history_checker.py",
+  "checker_sha256": "96f6f21b43ae5047797af7676d3a29acc0e441f471a846d1e0b9b81b48119746",
+  "history_file": "history.json",
+  "history_sha256": "0b5afc67cb5721adfe4850db202dbe1e46de04c5a9b0927a81f27e85a965e217",
+  "original_result": {
+    "checked_operations": 4,
+    "explored_states": 4,
+    "property": "inventory_reservation_history",
+    "reason": "a legal sequential ordering exists under the declared exclusive scope",
+    "run_id": "1b94dfcb-906a-4430-ba60-2d1c0b9d153d",
+    "scope": "M18 observed service calls",
+    "verdict": "PASS",
+    "witness": [
+      "inventory_reserve/actor-0/step-0",
+      "inventory_reserve/actor-0/step-1",
+      "inventory_reserve/actor-1/step-0",
+      "inventory_reserve/actor-1/step-1"
+    ]
+  },
+  "plan": {
+    "actorCount": 2,
+    "initialStock": 1,
+    "operations": [
+      {
+        "actorId": 0,
+        "logicalRequestId": "inventory_reserve/actor-0/step-0",
+        "operationId": "inventory_reserve/actor-0/step-0",
+        "quantity": 1,
+        "step": 0,
+        "type": "inventory_reserve"
+      },
+      {
+        "actorId": 0,
+        "logicalRequestId": "inventory_reserve/actor-0/step-1",
+        "operationId": "inventory_reserve/actor-0/step-1",
+        "quantity": 1,
+        "step": 1,
+        "type": "inventory_reserve"
+      },
+      {
+        "actorId": 1,
+        "logicalRequestId": "inventory_reserve/actor-1/step-0",
+        "operationId": "inventory_reserve/actor-1/step-0",
+        "quantity": 1,
+        "step": 0,
+        "type": "inventory_reserve"
+      },
+      {
+        "actorId": 1,
+        "logicalRequestId": "inventory_reserve/actor-1/step-1",
+        "operationId": "inventory_reserve/actor-1/step-1",
+        "quantity": 1,
+        "step": 1,
+        "type": "inventory_reserve"
+      }
+    ],
+    "operationsPerActor": 2,
+    "runId": "1b94dfcb-906a-4430-ba60-2d1c0b9d153d",
+    "scenarioId": "inventory_reserve",
+    "schemaVersion": 1,
+    "seed": 17,
+    "startConstraint": "first operation starts after all actors are ready; each actor is sequential",
+    "timeoutMillis": 20000
+  },
+  "property": "inventory_reservation_history",
+  "provenance": "test-jvm/spring-service/disposable-postgresql",
+  "run_id": "1b94dfcb-906a-4430-ba60-2d1c0b9d153d",
+  "scenario_id": "inventory_reserve",
+  "schema_version": 1,
+  "seed": 17,
+  "source_kind": "captured_test_execution"
+}

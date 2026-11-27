@@ -14,6 +14,10 @@ for (const route of routes) {
   assert.doesNotMatch(html, /(?:src|href)="https?:/);
 }
 assert.equal(await readFile(new URL('architecture.current.svg', root), 'utf8'), await readFile(new URL('../../docs/diagrams/architecture.current.svg', import.meta.url), 'utf8'), 'Architecture asset must remain an exact copy of its source');
+const catalog = JSON.parse(await readFile(new URL('../evidence/catalog.json', import.meta.url), 'utf8'));
+const reportAssets = Object.fromEntries(catalog.flatMap(e => Object.entries(e.assetHashes)));
+const { createHash } = await import('node:crypto');
+for (const [path, hash] of Object.entries(reportAssets)) assert.equal(createHash('sha256').update(await readFile(new URL(path, root))).digest('hex'), hash);
 let count = 0;
 let bytes = 0;
 async function inspect(directory) {
@@ -21,7 +25,7 @@ async function inspect(directory) {
     const url = new URL(entry.name + (entry.isDirectory() ? '/' : ''), directory);
     if (entry.isDirectory()) { await inspect(url); continue; }
     assert(entry.isFile(), 'Only regular assets are permitted');
-    assert(/\.(?:html|js|css)$/.test(entry.name) || entry.name === 'architecture.current.svg' || entry.name === '_headers', `Unexpected asset: ${entry.name}`);
+    assert((!url.pathname.includes('/reports/') && /\.(?:html|js|css)$/.test(entry.name)) || Object.hasOwn(reportAssets, url.pathname.slice(root.pathname.length)) || entry.name === 'architecture.current.svg' || entry.name === '_headers', `Unexpected asset: ${entry.name}`);
     const size = (await stat(url)).size;
     assert(size <= 25 * 1024 * 1024);
     const text = await readFile(url, 'utf8');

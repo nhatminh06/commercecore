@@ -1,14 +1,14 @@
 import { PageHeader } from '../components/PageHeader';
+import { evidence } from '../evidence/catalog';
+import { EvidenceSummary } from '../evidence/EvidenceSummary';
 
 export function Lab() {
   return <>
-    <PageHeader title="Consistency Lab" description="Bounded tests and independent analysis support scoped claims about CommerceCore." />
-    <section className="panel" aria-labelledby="page-status">
-      <p className="eyebrow" id="page-status">Evidence catalog not implemented</p>
-      <p>Observed service-call histories, synthetic checker mutations, and local qualification are different evidence classes. No generated bundles are published in this scaffold.</p>
-      <ul><li><a href="https://github.com/nhatminh06/commercecore/blob/c17118e3db9250cd2d51476ecce05bbee97f4f42/docs/roadmap/CONSISTENCY-LAB-ROADMAP.md">Consistency Lab roadmap</a></li></ul>
-    <p className="help">Reviewed verification artifacts will be integrated in C3. The browser simulation is not independent backend evidence.</p>
-    </section>
-    <p className="project-links"><a href="/lab">Lab scope</a><a href="/lab/debugger">Debugger entry</a><a href="/evidence">Publication boundaries</a><a href="/walkthrough">Local simulation</a></p>
+    <PageHeader title="Consistency Lab" description="Historical bounded executions and synthetic checker cases, independently rechecked offline for local review." />
+    <p className="simulation-label">Local review candidates · owner deployment approval pending. Capture revisions remain UNVERIFIED. No live experiments run on this site.</p>
+    <ol className="evidence-pipeline" aria-label="Evidence pipeline"><li><strong>M18 · Record</strong><span>Test-JVM calls against disposable PostgreSQL</span></li><li><strong>M19 · Check</strong><span>Bounded models and possible sequential witness</span></li><li><strong>M20 · Recheck</strong><span>Hashed bundle; analytical FAIL reduction</span></li><li><strong>M21 · Inspect</strong><span>Offline timeline and operation inspector</span></li></ol>
+    <p>A PASS admits one sequential explanation under externally declared exclusive scope. It does not prove persisted state, global linearizability, exactly-once transport, or production correctness. Synthetic FAIL is a model counterexample, not an observed application defect.</p>
+    {evidence.map(entry => <EvidenceSummary key={entry.id} entry={entry} />)}
+    <p className="project-links"><a href="/lab/debugger">Choose a debugger report</a><a href="/evidence">Hashes and reproduction</a><a href="/walkthrough">Separate browser simulation</a></p>
   </>;
 }

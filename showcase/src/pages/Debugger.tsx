@@ -1,14 +1,17 @@
+import { useState } from 'react';
 import { PageHeader } from '../components/PageHeader';
+import { evidence } from '../evidence/catalog';
+import { EvidenceSummary } from '../evidence/EvidenceSummary';
 
 export function Debugger() {
+  const [selected, setSelected] = useState('inventory');
+  const entry = evidence.find(e => e.id === selected)!;
   return <>
-    <PageHeader title="Execution-history debugger" description="A planned static presentation of reviewed and verified execution-history reports." />
-    <section className="panel" aria-labelledby="page-status">
-      <p className="eyebrow" id="page-status">Viewer not implemented</p>
-      <p>The existing offline debugger analyzes supported M18–M20 histories. No history, witness ordering, or counterexample is loaded here.</p>
-      <ul><li><a href="https://github.com/nhatminh06/commercecore/blob/c17118e3db9250cd2d51476ecce05bbee97f4f42/tools/consistency_lab/M21-EXECUTION-DEBUGGER.md">Offline debugger documentation</a></li></ul>
-    <p className="help">Reviewed verification artifacts will be integrated in C3. The browser simulation is not independent backend evidence.</p>
-    </section>
-    <p className="project-links"><a href="/lab">Lab scope</a><a href="/lab/debugger">Debugger entry</a><a href="/evidence">Publication boundaries</a><a href="/walkthrough">Local simulation</a></p>
+    <PageHeader title="Execution-history debugger" description="Choose a historical observed execution or a synthetic mutation, then open its standalone M21 report." />
+    <p className="simulation-label">Owner deployment approval pending. These static reports contain reviewed local candidates; capture Git revisions are UNVERIFIED.</p>
+    <label htmlFor="evidence-selection">Evidence example</label><select id="evidence-selection" value={selected} onChange={e => setSelected(e.target.value)}>{evidence.map(e => <option value={e.id} key={e.id}>{e.title}</option>)}</select>
+    <EvidenceSummary entry={entry} />
+    <section className="panel"><h2>Reading the report</h2><p>Tab to operation buttons and press Enter or Space to inspect plan and observation fields. Zoom changes interval placement; the timeline scrolls horizontally. Synthetic reports include Original and Reduced analytical views. Print using the browser print command.</p><p>A witness is a possible ordering, not an observed execution order. The reduced synthetic history was not executed. No provider, database transaction, Kafka, or network-fault timeline was captured by M18.</p></section>
+    <p><a href="/evidence">Read complete provenance, hashes, commands, and limitations</a></p>
   </>;
 }

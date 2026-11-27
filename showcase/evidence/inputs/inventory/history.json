@@ -1,0 +1,98 @@
+{
+  "schemaVersion" : 1,
+  "plan" : {
+    "schemaVersion" : 1,
+    "scenarioId" : "inventory_reserve",
+    "runId" : "1b94dfcb-906a-4430-ba60-2d1c0b9d153d",
+    "seed" : 17,
+    "initialStock" : 1,
+    "actorCount" : 2,
+    "operationsPerActor" : 2,
+    "timeoutMillis" : 20000,
+    "startConstraint" : "first operation starts after all actors are ready; each actor is sequential",
+    "operations" : [ {
+      "operationId" : "inventory_reserve/actor-0/step-0",
+      "actorId" : 0,
+      "step" : 0,
+      "type" : "inventory_reserve",
+      "logicalRequestId" : "inventory_reserve/actor-0/step-0",
+      "quantity" : 1
+    }, {
+      "operationId" : "inventory_reserve/actor-0/step-1",
+      "actorId" : 0,
+      "step" : 1,
+      "type" : "inventory_reserve",
+      "logicalRequestId" : "inventory_reserve/actor-0/step-1",
+      "quantity" : 1
+    }, {
+      "operationId" : "inventory_reserve/actor-1/step-0",
+      "actorId" : 1,
+      "step" : 0,
+      "type" : "inventory_reserve",
+      "logicalRequestId" : "inventory_reserve/actor-1/step-0",
+      "quantity" : 1
+    }, {
+      "operationId" : "inventory_reserve/actor-1/step-1",
+      "actorId" : 1,
+      "step" : 1,
+      "type" : "inventory_reserve",
+      "logicalRequestId" : "inventory_reserve/actor-1/step-1",
+      "quantity" : 1
+    } ]
+  },
+  "provenance" : "test-jvm/spring-service/disposable-postgresql",
+  "clockSource" : "System.nanoTime monotonic within test JVM",
+  "startedAt" : "2026-11-24T19:02:30.311781Z",
+  "finishedAt" : "2026-11-24T19:02:30.317794Z",
+  "quiescent" : true,
+  "complete" : true,
+  "quiescenceEvidence" : "all actor tasks terminated before history freeze",
+  "plannedCount" : 4,
+  "invokedCount" : 4,
+  "completedCount" : 4,
+  "observations" : [ {
+    "operationId" : "inventory_reserve/actor-0/step-0",
+    "state" : "COMPLETED",
+    "outcome" : "SUCCESS",
+    "resultId" : "5fd7c7c5-2792-41cc-a81c-895d6fd16ffc",
+    "rejectionCode" : null,
+    "exceptionType" : null,
+    "invokedNanos" : 151458,
+    "completedNanos" : 2566042,
+    "invokedAt" : "2026-11-24T19:02:30.311933Z",
+    "completedAt" : "2026-11-24T19:02:30.314347Z"
+  }, {
+    "operationId" : "inventory_reserve/actor-0/step-1",
+    "state" : "COMPLETED",
+    "outcome" : "REJECTED",
+    "resultId" : null,
+    "rejectionCode" : "insufficient_stock",
+    "exceptionType" : null,
+    "invokedNanos" : 2574583,
+    "completedNanos" : 4545958,
+    "invokedAt" : "2026-11-24T19:02:30.314356Z",
+    "completedAt" : "2026-11-24T19:02:30.316327Z"
+  }, {
+    "operationId" : "inventory_reserve/actor-1/step-0",
+    "state" : "COMPLETED",
+    "outcome" : "REJECTED",
+    "resultId" : null,
+    "rejectionCode" : "insufficient_stock",
+    "exceptionType" : null,
+    "invokedNanos" : 152625,
+    "completedNanos" : 4556458,
+    "invokedAt" : "2026-11-24T19:02:30.311934Z",
+    "completedAt" : "2026-11-24T19:02:30.316338Z"
+  }, {
+    "operationId" : "inventory_reserve/actor-1/step-1",
+    "state" : "COMPLETED",
+    "outcome" : "REJECTED",
+    "resultId" : null,
+    "rejectionCode" : "insufficient_stock",
+    "exceptionType" : null,
+    "invokedNanos" : 4566458,
+    "completedNanos" : 5953042,
+    "invokedAt" : "2026-11-24T19:02:30.316347Z",
+    "completedAt" : "2026-11-24T19:02:30.317734Z"
+  } ]
+}
