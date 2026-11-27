@@ -13,6 +13,7 @@ for (const route of routes) {
   assert.match(html, /src="\/assets\//);
   assert.doesNotMatch(html, /(?:src|href)="https?:/);
 }
+assert.equal(await readFile(new URL('architecture.current.svg', root), 'utf8'), await readFile(new URL('../../docs/diagrams/architecture.current.svg', import.meta.url), 'utf8'), 'Architecture asset must remain an exact copy of its source');
 let count = 0;
 let bytes = 0;
 async function inspect(directory) {
@@ -20,7 +21,7 @@ async function inspect(directory) {
     const url = new URL(entry.name + (entry.isDirectory() ? '/' : ''), directory);
     if (entry.isDirectory()) { await inspect(url); continue; }
     assert(entry.isFile(), 'Only regular assets are permitted');
-    assert(/\.(?:html|js|css)$/.test(entry.name) || entry.name === '_headers', `Unexpected asset: ${entry.name}`);
+    assert(/\.(?:html|js|css)$/.test(entry.name) || entry.name === 'architecture.current.svg' || entry.name === '_headers', `Unexpected asset: ${entry.name}`);
     const size = (await stat(url)).size;
     assert(size <= 25 * 1024 * 1024);
     const text = await readFile(url, 'utf8');

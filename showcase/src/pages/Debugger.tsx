@@ -7,6 +7,8 @@ export function Debugger() {
       <p className="eyebrow" id="page-status">Viewer not implemented</p>
       <p>The existing offline debugger analyzes supported M18–M20 histories. No history, witness ordering, or counterexample is loaded here.</p>
       <ul><li><a href="https://github.com/nhatminh06/commercecore/blob/c17118e3db9250cd2d51476ecce05bbee97f4f42/tools/consistency_lab/M21-EXECUTION-DEBUGGER.md">Offline debugger documentation</a></li></ul>
+    <p className="help">Reviewed verification artifacts will be integrated in C3. The browser simulation is not independent backend evidence.</p>
     </section>
+    <p className="project-links"><a href="/lab">Lab scope</a><a href="/lab/debugger">Debugger entry</a><a href="/evidence">Publication boundaries</a><a href="/walkthrough">Local simulation</a></p>
   </>;
 }

@@ -15,7 +15,7 @@ for (const [path, title] of routes) {
     const response = await page.goto(path);
     expect(response?.status()).toBe(200);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
-    await expect(page.getByRole('navigation').getByRole('link')).toHaveCount(6);
+    await expect(page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link')).toHaveCount(6);
     await expect(page.locator('[aria-current="page"]')).toHaveAttribute('href', path);
     expect((await page.reload())?.status()).toBe(200);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
@@ -44,11 +44,11 @@ test('keyboard navigation and desktop/mobile layout', async ({ page }) => {
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 900 });
     await page.reload();
-    await expect(page.getByRole('navigation')).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: `test-results/overview-${width}.png`, fullPage: true });
   }
-  await page.getByRole('navigation').getByRole('link', { name: 'Walkthrough', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Walkthrough', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Simulated checkout');
-  await expect(page.getByText('Not implemented', { exact: true })).toBeVisible();
+  await expect(page.getByText('Educational model only.', { exact: false })).toBeVisible();
 });
