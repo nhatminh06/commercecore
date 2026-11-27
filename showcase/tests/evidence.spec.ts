@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 const examples = ['inventory', 'checkout', 'synthetic'];
-for (const width of [390, 1440]) {
+for (const width of [390, 768, 1440]) {
   for (const id of examples) {
     test(`${id}: inspector, keyboard, zoom, scroll and print at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
