@@ -1,6 +1,6 @@
-# CommerceCore showcase — C1
+# CommerceCore showcase — C2
 
-This is a frontend scaffold, not a live commerce service. It is independent of the Java backend, Payment Service, PostgreSQL, Kafka, and Next.js Control Room. It does not execute checkout, run experiments, display histories, or publish generated evidence.
+This is an educational local browser simulation, not a live commerce service. It is independent of the Java backend, Payment Service, PostgreSQL, Kafka, and Next.js Control Room. It does not execute real checkout, run backend experiments, display histories, or publish generated evidence.
 
 ## Technology and scope
 
@@ -15,6 +15,7 @@ npm run dev
 npm run typecheck
 npm run lint
 npm run build
+npm run test:unit
 npm test
 npm audit
 npm run preview
@@ -36,12 +37,35 @@ Browser → dedicated `commercecore-showcase` Workers Static Assets → `dist/` 
 
 The `_headers` Content Security Policy blocks connections (`connect-src 'none'`) and external assets. Documentation links are user-initiated navigations to revision-pinned GitHub source; they are not automatic API requests. Build checks reject unexpected asset types, known backend endpoints and recognized credential patterns. Pattern checks do not establish exhaustive secret detection: review every future public asset. No `.env` or generated lab bundles are included.
 
-Current documentation checked for C1:
+Static hosting references checked during C1:
 - https://developers.cloudflare.com/workers/static-assets/routing/static-site-generation/
 - https://developers.cloudflare.com/workers/static-assets/get-started/
 
 ## Boundaries and next milestones
 
-C1 contains page shells, accurate descriptions, explicit pending notices, and source links. It includes no simulated results, catalog, history renderer, or imported evidence. Existing backend, frontend, infrastructure, dirty files, and stashes must remain unchanged.
+C2 adds a deterministic local walkthrough, source-backed overview and architecture, and explicit C3 entry points. The architecture SVG is an exact copy of docs/diagrams/architecture.current.svg, not runtime evidence. Existing backend, frontend, infrastructure, dirty files, and stashes remain unchanged.
 
-C2 recommendation: implement the smallest clearly labeled local checkout walkthrough, with deterministic state transitions and tests; retain zero backend requests. C3 recommendation: review specific existing evidence for privacy and provenance, preserve original hashes/revision/assumptions, recheck it offline, then add a static evidence presentation and debugger. Synthetic counterexamples must remain distinct from observed executions. Neither milestone authorizes infrastructure changes.
+C3 recommendation: review specific existing evidence for privacy and provenance, preserve original hashes/revision/assumptions, recheck it offline, then add a static evidence presentation and debugger. Synthetic counterexamples must remain distinct from observed executions. Neither milestone authorizes infrastructure changes.
+
+
+## Local simulation model
+
+`src/simulation/model.ts` is a pure immutable transition function. React dispatches actions and renders the result. Three fixed SKUs have integer-cent prices and initial stock 5/3/8; two fixed carts support key-conflict demonstrations. Quantities are integers 0–20 (zero removes a line). Demo keys use 1–64 letters, digits, underscores, or hyphens, a deliberately smaller input contract than the backend's 255-character key limit. At most 20 orders exist per session; identifiers start at SIM-ORDER-1. No random IDs, timestamps, scheduling, network delays, persistence, or browser storage are involved.
+
+| Action | Local model transition |
+| --- | --- |
+| Checkout | Validate all lines, then decrement available stock and create PENDING/ACTIVE order plus key mapping together |
+| Rejected checkout | No inventory, order, reservation, or key mapping change |
+| Same key + cart | Return original order snapshot, including after cart edits; no second decrement |
+| Same key + other cart | Reject without domain changes |
+| Authorization succeeds | Payment AUTHORIZED; order stays PENDING until workflow action |
+| Authorization declined | Payment FAILED; workflow later cancels order and releases stock once |
+| Response lost | Fixed provider outcome AUTHORIZED, local UNKNOWN; no reauthorization |
+| Explicit lookup | UNKNOWN → AUTHORIZED; one lookup, no extra authorization; order still awaits workflow |
+| Explicit expiry | UNKNOWN/ACTIVE → EXPIRED and return stock; later lookup requires review |
+| Workflow | AUTHORIZED + ACTIVE → CONFIRMED; lost ownership → REQUIRES_REVIEW without confirming |
+| Reset | Restore initial inventory, both empty carts, no orders/mappings, initial key and scenario |
+
+These are educational transitions, not PostgreSQL concurrency control, independent correctness evidence, real Kafka delivery, or real provider calls. Authorization and Kafka workflow are intentionally separate user actions. This bounded walkthrough only models one fixed lookup outcome (AUTHORIZED), not every provider outcome or reconciliation race. It does not model automatic reconciliation, refunds, shipping, automatic re-reservation, or an execution timeline. Refreshing or leaving the route also resets memory.
+
+`npm run test:unit` uses Node's built-in test runner and experimental TypeScript stripping (Node 22.12+); no test dependency was added. `npm test` includes those unit tests, output safety checks, all C1 browser checks, and C2 interactions at 390 and 1440 px. Unit tests cover atomicity, identity, payments, review, reset, invalid actions and bounded identifiers. Browser screenshots are under ignored `test-results/overview-*.png` and `test-results/walkthrough-*.png`. The build checker allows the named architecture SVG only when its bytes match the repository source; it does not allow generated evidence bundles.

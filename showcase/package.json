@@ -7,7 +7,8 @@
     "lint": "eslint .",
     "build": "npm run typecheck && vite build",
     "preview": "wrangler dev --local --ip 127.0.0.1 --port 4173",
-    "test": "node scripts/check-build.mjs && playwright test"
+    "test:unit": "node --experimental-strip-types --test tests/simulation.test.ts",
+    "test": "npm run test:unit && node scripts/check-build.mjs && playwright test"
   },
   "dependencies": { "react": "19.3.1", "react-dom": "19.3.1" },
   "devDependencies": {
