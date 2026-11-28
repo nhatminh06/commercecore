@@ -6,8 +6,9 @@ const routes = [
   ['/lab/debugger', 'Execution-history debugger'], ['/evidence', 'Evidence and reproduction'],
 ];
 
-for (const [path, title] of routes) {
-  test(`direct load, refresh, and network isolation: ${path}`, async ({ page }) => {
+for (const width of [390, 768, 1440]) for (const [path, title] of routes) {
+  test(`direct load, refresh, and network isolation: ${path} at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
     const requests: string[] = [];
     const errors: string[] = [];
     page.on('request', request => requests.push(request.url()));
@@ -19,6 +20,10 @@ for (const [path, title] of routes) {
     await expect(page.locator('[aria-current="page"]')).toHaveAttribute('href', path);
     expect((await page.reload())?.status()).toBe(200);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    expect(response?.headers()['x-content-type-options']).toBe('nosniff');
+    expect(response?.headers()['referrer-policy']).toBe('strict-origin-when-cross-origin');
+    expect(response?.headers()['permissions-policy']).toBe('camera=(), microphone=(), geolocation=()');
     expect(errors).toEqual([]);
     expect(requests.every(url => url.startsWith('http://127.0.0.1:4173/'))).toBe(true);
     expect(requests.some(url => /\/api\/|:8080|:8091/.test(url))).toBe(false);
@@ -41,7 +46,7 @@ test('keyboard navigation and desktop/mobile layout', async ({ page }) => {
   expect(await page.locator(':focus').evaluate(el => getComputedStyle(el).outlineStyle)).toBe('solid');
   await page.keyboard.press('Enter');
   await expect(page.locator('main')).toBeFocused();
-  for (const width of [1440, 390]) {
+  for (const width of [1440, 768, 390]) {
     await page.setViewportSize({ width, height: 900 });
     await page.reload();
     await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toBeVisible();
