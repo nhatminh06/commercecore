@@ -1,6 +1,6 @@
-# CommerceCore showcase — C2
+# CommerceCore technical showcase
 
-This is an educational local browser simulation, not a live commerce service. It is independent of the Java backend, Payment Service, PostgreSQL, Kafka, and Next.js Control Room. It does not execute real checkout, run backend experiments, display histories, or publish generated evidence.
+This is an educational local browser simulation, not a live commerce service. It is independent of the Java backend, Payment Service, PostgreSQL, Kafka, and Next.js Control Room. It does not execute real checkout or run backend experiments. It presents reviewed recorded histories and a separately labeled synthetic checker counterexample.
 
 ## Technology and scope
 
@@ -33,7 +33,7 @@ Wrangler uses `html_handling: drop-trailing-slash` and `not_found_handling: 404-
 
 ## Hosting architecture and safety
 
-Browser → dedicated `commercecore-showcase` Workers Static Assets → `dist/` only. There is no Worker execution handler, service binding, database, environment secret, custom domain, or configured route. Cloudflare account isolation, existing resources, Free-plan usage, and domain availability remain UNVERIFIED. Do not deploy until separately approved and checked.
+Browser → dedicated `commercecore-showcase` Workers Static Assets → `dist/` only. There is no authored Worker execution handler, service binding, database, or environment secret. The separately authorized production Worker serves https://commercecore.minhpham06.com/ through a Custom Domain, with no wildcard Worker routes. See [production release and maintenance](docs/C6-PRODUCTION-RELEASE.md) for the verified release, account isolation, and approval gates.
 
 The `_headers` Content Security Policy blocks connections (`connect-src 'none'`) and external assets. Documentation links are user-initiated navigations to revision-pinned GitHub source; they are not automatic API requests. Build checks reject unexpected asset types, known backend endpoints and recognized credential patterns. Pattern checks do not establish exhaustive secret detection: review every future public asset. No `.env` or generated lab bundles are included.
 
@@ -74,7 +74,7 @@ These are educational transitions, not PostgreSQL concurrency control, independe
 
 The `/lab`, `/lab/debugger`, and `/evidence` routes now distinguish historical locally observed bounded tests, synthetic checker mutations, and the separate browser simulation. Three standalone M21 reports are served from local static assets. No C2 simulation rules changed.
 
-See [evidence/REVIEW.md](evidence/REVIEW.md) for the exact privacy review, provenance limitations, preparation command, allowlist, derivative changes and owner-review gate. [evidence/catalog.json](evidence/catalog.json) records all source/derivative hashes. Historical capture Git revisions remain UNVERIFIED by explicit owner instruction; tool/recheck revision is recorded separately. Public deployment approval remains PENDING.
+See [evidence/REVIEW.md](evidence/REVIEW.md) for the exact privacy review, provenance limitations, preparation command, allowlist, derivative changes and owner-review gate. [evidence/catalog.json](evidence/catalog.json) records all source/derivative hashes. Historical capture Git revisions remain UNVERIFIED by explicit owner instruction; tool/recheck revision is recorded separately. The reviewed artifact text retains its historical pending-approval wording; later owner approval and production qualification are recorded in [the production release record](docs/C6-PRODUCTION-RELEASE.md).
 
 `npm run build` now verifies the retained source bundles, exact checker hash and public asset hashes before TypeScript/Vite. It needs no ignored build artifacts, Python, Docker, Java, PostgreSQL or backend access. The retained inputs and prepared public derivatives are source files intended for inclusion in the eventual reviewed commit; no commit is made by this task. `npm run test:unit` includes manifest, source-kind, assumptions, malformed provenance, allowlist and hash checks. `npm test` adds standalone report selection/inspector/witness/reduction/zoom/scroll/print tests at 390 and 1440 px plus all C1/C2 regressions. Screenshots and print PDFs go only to ignored `test-results/`.
 
