@@ -39,8 +39,18 @@ or production readiness.
   in [production deployment](docs/deployment.md).
 - Full Ubuntu, firewall, Cloudflare, backup, update, and rollback instructions: [production deployment](docs/deployment.md).
 
-The intended public hostname is `commercecore.minhpham06.com`, but this README does not advertise a
-live-demo link until the HTTPS deployment has been independently verified.
+## Live technical showcase
+
+[Open the CommerceCore showcase](https://commercecore.minhpham06.com/): a static-first,
+browser-based technical demonstration with a local checkout simulation and reviewed Consistency
+Lab evidence. The hosted site does not run Java, PostgreSQL, Kafka, or the gRPC Payment Service.
+The backend walkthrough below is for local use.
+
+The qualified release is source `43a969f5e08a3f918936ea697f8619a1bc939efc`, served by the
+`commercecore-showcase` Cloudflare Worker. Fresh hosted requalification passed 35 browser tests
+with zero failures/skips and all 18 public artifact hashes matching the approved manifest.
+See [production release and maintenance](showcase/docs/C6-PRODUCTION-RELEASE.md) for exact
+version IDs, hashes, evidence limits, the RUM injection incident, and rollback gates.
 
 ## Portfolio walkthrough
 
