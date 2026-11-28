@@ -1,6 +1,6 @@
 # C5 isolated preview runbook
 
-Prepared 2026-11-27 against C4 baseline `9ed3fe1540a16455baf0292c52e8afdb73aae910`, Wrangler 4.169.0. **Instructions only: no preview or production deployment has been authorized or executed.** C4 is conditional; do not execute the mutation commands below until account isolation is verified and the owner explicitly authorizes C5 for the exact revision, configuration and asset hashes.
+Prepared 2026-11-27 against C4 baseline `9ed3fe1540a16455baf0292c52e8afdb73aae910`, Wrangler 4.169.0. The owner subsequently authorized the isolated C5 preview; its upload and validation are recorded in [C5-PREVIEW-RESULT.md](C5-PREVIEW-RESULT.md). The commands below remain a procedure, not authorization to repeat deployment or delete the preview. Production promotion and Custom Domain attachment remain separately gated.
 
 ## Account and isolation gate
 
@@ -10,7 +10,7 @@ In the read-only Cloudflare dashboard, record account identity/Free plan, Worker
 
 ## Exact configuration and build
 
-Current `showcase/wrangler.jsonc` is assets-only with no handler or bindings. A future C5 change must review this dedicated preview config at `showcase/wrangler.preview.jsonc` (not created by C4):
+Current `showcase/wrangler.jsonc` is assets-only with no handler or bindings. C5 added the following dedicated config at `showcase/wrangler.preview.jsonc` (not part of C4):
 
 ```json
 {
@@ -26,7 +26,7 @@ Current `showcase/wrangler.jsonc` is assets-only with no handler or bindings. A 
 }
 ```
 
-Review against installed Wrangler schema/help before use. No `main`, routes, custom domains, secrets, environment variables, D1, KV, R2, Durable Objects or service bindings. Do not attach `commercecore.minhpham.com`. Ignore any remote Previews Base config when creating the preview. The dedicated config leaves the existing strict local config check intact.
+Review against installed Wrangler schema/help before use. No `main`, routes, custom domains, secrets, environment variables, D1, KV, R2, Durable Objects or service bindings. Do not attach `commercecore.minhpham06.com`. Ignore any remote Previews Base config when creating the preview. The dedicated config leaves the existing strict local config check intact.
 
 From repository root:
 
